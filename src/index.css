@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/*#root {*/
+/*  overflow-y: auto;*/
+/*  max-height: 100vh;*/
+/*}*/
+
+::-webkit-scrollbar { width: 10px; /* width of the entire scrollbar */ height: 10px; /* width of the entire scrollbar */ }
+
+::-webkit-scrollbar-track { background: #fff; /* color of the tracking area */ border-radius: 0.5rem; }
+
+::-webkit-scrollbar-thumb { background-color: #e9ecef; /* color of the scroll thumb */ border-radius: 0.5rem; /* roundness of the scroll thumb */ border: 1px solid #fff; /* creates padding around scroll thumb */ }

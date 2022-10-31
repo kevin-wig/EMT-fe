@@ -1,0 +1,102 @@
+image: atlassian/default-image:2
+
+pipelines:
+  branches:
+    master:
+      - step:
+          name: Installation
+          deployment: azure-dev-env
+          caches:
+            - node
+          script:
+            - nvm install 14
+            - npm install -g yarn
+            - yarn install
+            - unset CI
+            - touch .env
+            - echo $ENV_FILE_BASE64 | base64 --decode --ignore-garbage > .env
+            - cat .env
+            - npx browserslist@latest --update-db
+            - yarn build
+            - ls
+            - cd build
+            - zip -r ../emt-fe-$BITBUCKET_BUILD_NUMBER.zip .
+          artifacts: 
+            - emt-fe-*.zip
+      - step:
+          name: "Deploy to Azure"
+          deployment: azure-dev
+          script:
+            - pipe: microsoft/azure-web-apps-deploy:1.0.4
+              variables:
+                AZURE_APP_ID: $AZURE_APP_ID
+                AZURE_PASSWORD: $AZURE_PASSWORD
+                AZURE_TENANT_ID: $AZURE_TENANT_ID
+                AZURE_RESOURCE_GROUP: $RESOURCE_GROUP
+                AZURE_APP_NAME: $APP_NAME
+                ZIP_FILE: 'emt-fe-$BITBUCKET_BUILD_NUMBER.zip'
+  custom:
+    qa:
+      - step:
+          name: Installation
+          deployment: azure-qa-env
+          caches:
+            - node
+          script:
+            - nvm install 14
+            - npm install -g yarn
+            - yarn install
+            - unset CI
+            - touch .env
+            - echo $ENV_FILE_BASE64 | base64 --decode --ignore-garbage > .env
+            - cat .env
+            - yarn build
+            - ls
+            - cd build
+            - zip -r ../emt-fe-$BITBUCKET_BUILD_NUMBER.zip .
+          artifacts: 
+            - emt-fe-*.zip
+      - step:
+          name: "Deploy to Azure"
+          deployment: azure-qa
+          script:
+            - pipe: microsoft/azure-web-apps-deploy:1.0.4
+              variables:
+                AZURE_APP_ID: $AZURE_APP_ID
+                AZURE_PASSWORD: $AZURE_PASSWORD
+                AZURE_TENANT_ID: $AZURE_TENANT_ID
+                AZURE_RESOURCE_GROUP: $RESOURCE_GROUP
+                AZURE_APP_NAME: $APP_NAME
+                ZIP_FILE: 'emt-fe-$BITBUCKET_BUILD_NUMBER.zip'
+    prod:
+      - step:
+          name: Installation
+          deployment: azure-prod-env
+          caches:
+            - node
+          script:
+            - nvm install 14
+            - npm install -g yarn
+            - yarn install
+            - unset CI
+            - touch .env
+            - echo $ENV_FILE_BASE64 | base64 --decode --ignore-garbage > .env
+            - cat .env
+            - yarn build
+            - ls
+            - cd build
+            - zip -r ../emt-fe-$BITBUCKET_BUILD_NUMBER.zip .
+          artifacts: 
+            - emt-fe-*.zip
+      - step:
+          name: "Deploy to Azure"
+          deployment: azure-prod
+          script:
+            - pipe: microsoft/azure-web-apps-deploy:1.0.4
+              variables:
+                AZURE_APP_ID: $AZURE_APP_ID
+                AZURE_PASSWORD: $AZURE_PASSWORD
+                AZURE_TENANT_ID: $AZURE_TENANT_ID
+                AZURE_RESOURCE_GROUP: $RESOURCE_GROUP
+                AZURE_APP_NAME: $APP_NAME
+                ZIP_FILE: 'emt-fe-$BITBUCKET_BUILD_NUMBER.zip'
