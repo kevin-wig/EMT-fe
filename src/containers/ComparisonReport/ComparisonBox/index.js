@@ -214,7 +214,7 @@ const ComparisonBox = ({
         else{
           found = CII_IMO_VALUES;
         }
-        
+
         setMultiaxisData({
           labels: found.reduce((total, curr) => {
             return [...total, ...curr.values.map(c => `${curr.type};${c.dwt}`)]
@@ -324,6 +324,7 @@ const ComparisonBox = ({
     //   selectedVesselsList.map((vessel) => vessel?.id)
     // );
 
+    formik.setFieldValue("vesselIds", state.vesselIds.filter((vesselId) => selectedVesselsList.find(({ id }) => id === vesselId)));
     setVesselList(selectedVesselsList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, vessels]);
@@ -470,7 +471,7 @@ const ComparisonBox = ({
         reportOpt.vesselAge = reportOpt.vesselAge.split(",").map((age) => +age);
       }
     }
-    
+
     if (admin && reportOpt.companyIds.length === 0) {
       reportOpt.companyIds = companies.map(company => company?.id);
     }
@@ -549,8 +550,8 @@ const ComparisonBox = ({
 
   const handleVesselDWTChange = (e) => {
    const vesselDWT = e.target.value;
-   
-   formik.setFieldValue("dwt", vesselDWT) 
+
+   formik.setFieldValue("dwt", vesselDWT)
   }
 
   const handleChangeCompanyIds = (e) => {
@@ -559,18 +560,19 @@ const ComparisonBox = ({
 
     setFleetList(fleets);
     setFilter(!filter);
-    setVesselList(vessels)
   }
 
   const handleChangeFleets = (e) => {
     setFilter(!filter);
-    setVesselList(vessels.filter(vessel => e.target.value.includes(vessel?.fleet?.id)));
+    const filteredVessels = vessels.filter(vessel => e.target.value.includes(vessel?.fleet?.id));
+    setVesselList(filteredVessels);
+    formik.setFieldValue("vesselIds", filteredVessels.map((vessel) => vessel.id));
   }
 
   const handleChangeYear = (value) => {
     setYear(value);
   }
-  
+
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
     if ((admin && selectedValues.indexOf('imo_average') > -1) || selectedValues === 'imo_average') {
