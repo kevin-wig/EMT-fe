@@ -161,11 +161,13 @@ const ComparisonBox = ({
 
   const [charTitle, setChartTitle] = useState("");
   const [comparisonData, setComparisonData] = useState();
+  const [comparisonVoyageData, setComparisonVoyageData] = useState();
   const [vesselList, setVesselList] = useState();
   const [filter, setFilter] = useState(true);
   const [changedPayload, setChangedPayload] = useState(true);
   const [chartData, setChartData] = useState();
   const [chartYear, setChartYear] = useState();
+  const [selectedVessel, setSelectedVessel] = useState();
   const [fleetList, setFleetList] = useState(fleets);
   const [year, setYear] = useState(new Date().getFullYear());
   const [imoAverageMode, setIMOAverageMode] = useState(false);
@@ -233,6 +235,10 @@ const ComparisonBox = ({
         setComparisonData(data);
         addReportedOptions(id, options);
       });
+      getReport({ ...options, year }, year, true).then((res) => {
+        const data = res.data;
+        setComparisonVoyageData(data);
+      });
     },
   });
 
@@ -284,7 +290,7 @@ const ComparisonBox = ({
       generateChartData(comparisonData.chartData, reportOption.reportType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valuableYears]);
+  }, [valuableYears, selectedVessel]);
 
   useEffect(() => {
     const reportType = reportOption?.reportType;
@@ -330,26 +336,24 @@ const ComparisonBox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, vessels]);
 
-  useEffect(() => {
-    if (reportOption?.reportType) {
-      getReport({ ...reportOption, year }, chartYear).then((res) => {
-        const data = res.data;
-
-        updateReportedOptions(id, { ...reportOption, year, chartYear });
-        setComparisonData(data);
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chartYear]);
-
   console.log(chartData);
   const generateChartData = (chartData, reportType) => {
     if (reportType === REPORT_TYPE_ENUM.CII) {
-      const ciiLabels = chartYear ? MONTHS : chartData.map((data) => data.name);
-
-      setChartData({
-        labels: ciiLabels,
-        datasets: chartData.map((dt, index) => {
+      const ciiLabels = selectedVessel ? selectedVessel.data.map((dt) => dt.name || dt.key) : chartData.map((data) => data.name);
+      const datasets = selectedVessel
+        ? selectedVessel.data.map((dt, index) => {
+          const dataArray = new Array(ciiLabels.length).fill(0);
+          dataArray[index] = parseFloat(dt.cii)?.toFixed(3) || 0;
+          return {
+            label: dt.name || dt.key,
+            backgroundColor: newColor(index),
+            data: dataArray,
+            barPercentage: 0.7,
+            categoryPercentage: 1,
+            fill: true,
+          };
+        })
+        : chartData.map((dt, index) => {
           const dataArray = new Array(ciiLabels.length).fill(0);
           dataArray[index] = parseFloat(dt.data[0]?.cii)?.toFixed(3) || 0;
           return {
@@ -360,7 +364,11 @@ const ComparisonBox = ({
             categoryPercentage: 1,
             fill: true,
           };
-        }),
+        });
+
+      setChartData({
+        labels: ciiLabels,
+        datasets,
       });
     } else if (reportType === REPORT_TYPE_ENUM.ETS) {
       const vessels = Array.from(new Set(chartData.map((dt) => dt.name)));
@@ -430,7 +438,8 @@ const ComparisonBox = ({
 
   const handleDblClickChart = (event) => {
     event.preventDefault();
-    if (chartYear) {
+    if (chartYear || selectedVessel) {
+      setSelectedVessel(undefined)
       setChartYear(undefined);
     } else {
     }
@@ -438,9 +447,8 @@ const ComparisonBox = ({
 
   const handleClickChart = (elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
-      // console.log(elements);
-      if (!chartYear) {
-        setChartYear(valuableYears[elements[0]._index]);
+      if (!selectedVessel) {
+        setSelectedVessel(comparisonVoyageData?.chartData?.[elements[0]._index]);
       }
     }
   };
@@ -865,7 +873,7 @@ const ComparisonBox = ({
                 stepSize={1}
                 onDblClick={handleDblClickChart}
                 onClick={handleClickChart}
-                xLabel="Year"
+                xLabel={selectedVessel ? 'Voyages' : 'Vessels'}
                 yLabel="CII Attained"
               />
             </Grid>
