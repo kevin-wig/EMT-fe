@@ -74,7 +74,10 @@ const BarChart = ({
             label += ": ";
           }
           label += parseFloat(Number(tooltipItem.yLabel)?.toFixed(3));
-          return label;
+          if (tooltipItem.label === data.datasets[tooltipItem.datasetIndex].label) {
+            return label;
+          }
+          return '';
         },
       },
     },
