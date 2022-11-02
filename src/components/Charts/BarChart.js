@@ -49,6 +49,7 @@ const BarChart = ({
   title,
   xLabel = "",
   yLabel = "",
+  xStack = false,
   updatedDate,
   data,
   yMax,
@@ -88,7 +89,7 @@ const BarChart = ({
     scales: scales ? scales : {
       xAxes: [
         {
-          stacked: false,
+          stacked: xStack,
           gridLines: {
             color: 'transparent',
           },

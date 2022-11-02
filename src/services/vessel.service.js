@@ -346,9 +346,9 @@ export async function getEtsEuaPercentChart(id, year, mode, fromDate, toDate) {
     .catch((err) => Promise.reject(err))
 }
 
-export async function getReport(params, chartYear) {
+export async function getReport(params, chartYear, isVoyage) {
   return apiClient
-    .post(`/vessels/report`, { ...params }, { params: { year: chartYear } })
+    .post(`/vessels/report`, { ...params }, { params: { year: chartYear, isVoyage } })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }

@@ -31,6 +31,7 @@ import moment from 'moment';
 import { SUPER_ADMIN } from '../../../constants/UserRoles';
 import MultiaxisChart from '../../../components/Charts/MultiaxisChart';
 import MultiaxisLineChart from '../../../components/Charts/MultiaxisLineChart';
+import BarChart from '../../../components/Charts/BarChart';
 
 const _ = require("lodash")
 
@@ -341,27 +342,25 @@ const ComparisonBox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chartYear]);
 
+  console.log(chartData);
   const generateChartData = (chartData, reportType) => {
     if (reportType === REPORT_TYPE_ENUM.CII) {
-      const ciiLabels = chartYear ? MONTHS : valuableYears;
-      const ciiKeys = chartYear
-        ? Object.keys(MONTHS).map((index) => +index + 1)
-        : valuableYears;
+      const ciiLabels = chartYear ? MONTHS : chartData.map((data) => data.name);
 
       setChartData({
         labels: ciiLabels,
-        datasets: chartData.map((dt, index) => ({
-          label: dt.name,
-          backgroundColor: "transparent",
-          borderColor: newColor(index),
-          data: ciiKeys.map(
-            (key) =>
-              parseFloat(dt.data?.find((chartData) => +chartData.key === +key)?.cii)?.toFixed(3) || 0
-          ),
-          barPercentage: 0.7,
-          categoryPercentage: 1,
-          fill: true,
-        })),
+        datasets: chartData.map((dt, index) => {
+          const dataArray = new Array(ciiLabels.length).fill(0);
+          dataArray[index] = parseFloat(dt.data[0]?.cii)?.toFixed(3) || 0;
+          return {
+            label: dt.name,
+            backgroundColor: newColor(index),
+            data: dataArray,
+            barPercentage: 0.7,
+            categoryPercentage: 1,
+            fill: true,
+          };
+        }),
       });
     } else if (reportType === REPORT_TYPE_ENUM.ETS) {
       const vessels = Array.from(new Set(chartData.map((dt) => dt.name)));
@@ -439,6 +438,7 @@ const ComparisonBox = ({
 
   const handleClickChart = (elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
+      // console.log(elements);
       if (!chartYear) {
         setChartYear(valuableYears[elements[0]._index]);
       }
@@ -857,7 +857,8 @@ const ComparisonBox = ({
           )}
           {chartData && !imoAverageMode ? (
             <Grid item xs={12} md={12}>
-              <LineChart
+              <BarChart
+                xStack
                 title={charTitle}
                 data={chartData}
                 height={200}
