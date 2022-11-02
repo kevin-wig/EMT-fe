@@ -49,6 +49,7 @@ const BarChart = ({
   title,
   xLabel = "",
   yLabel = "",
+  xStack = false,
   updatedDate,
   data,
   yMax,
@@ -73,7 +74,10 @@ const BarChart = ({
             label += ": ";
           }
           label += parseFloat(Number(tooltipItem.yLabel)?.toFixed(3));
-          return label;
+          if (tooltipItem.label === data.datasets[tooltipItem.datasetIndex].label) {
+            return label;
+          }
+          return '';
         },
       },
     },
@@ -88,7 +92,7 @@ const BarChart = ({
     scales: scales ? scales : {
       xAxes: [
         {
-          stacked: false,
+          stacked: xStack,
           gridLines: {
             color: 'transparent',
           },

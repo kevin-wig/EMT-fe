@@ -356,8 +356,8 @@ function VesselProvider(props) {
       .catch(handleError);
   };
 
-  const getReport = useCallback(async (params, chartYear) => {
-    return await VesselsService.getReport(params, chartYear).catch((err) => {
+  const getReport = useCallback(async (params, chartYear, isVoyage) => {
+    return await VesselsService.getReport(params, chartYear, isVoyage).catch((err) => {
       notify('Failed to get report. Please make sure that options are correct!', 'error');
       throw err;
     });
