@@ -1,18 +1,18 @@
-export const REPORT_TYPES = ["CII", "ETS", "GHG"];
+export const REPORT_TYPES = ['CII', 'ETS', 'GHG'];
 
 export const REPORT_COMPANY_OPTIONS = [
-  "Your company",
-  "Other companies",
-  "IMO average",
+  'Your company',
+  'Other companies',
+  'IMO average',
 ].map((option) => ({ key: option.toLowerCase(), label: option }));
 
 export const REPORT_TYPE_OPTIONS = REPORT_TYPES.filter(
-  (reportType) => reportType !== "ETS" && reportType !== "GHG"
+  (reportType) => reportType !== 'ETS' && reportType !== 'GHG',
 ).map((reportType) => ({ key: reportType.toLowerCase(), label: reportType }));
 
 export const REPORT_TYPE_ENUM = REPORT_TYPES.reduce(
   (acc, reportType) => ({ ...acc, [reportType]: reportType.toLowerCase() }),
-  {}
+  {},
 );
 
 export const VESSEL_AGES = [
@@ -21,12 +21,12 @@ export const VESSEL_AGES = [
   [10, 15],
   [15, 20],
   [20, 25],
-  ["25+"],
+  ['25+'],
 ];
 
 export const VESSEL_AGE_OPTIONS = VESSEL_AGES.map((age) => ({
-  key: age.join(","),
-  label: age.join(" - "),
+  key: age.join(','),
+  label: age.join(' - '),
 }));
 
 export const VESSEL_DWT = [
@@ -42,8 +42,8 @@ export const VESSEL_DWT = [
       '25000 - 29999',
       '30000 - 34999',
       '35000 - 39999',
-      '40000+'
-    ]
+      '40000+',
+    ],
   },
   {
     type: 'Oil Tanker',
@@ -89,8 +89,8 @@ export const VESSEL_DWT = [
       '185000 - 189999',
       '190000 - 194999',
       '195000 - 199999',
-      '200000 +'
-    ]
+      '200000 +',
+    ],
   },
   {
     type: 'Bulk Carrier',
@@ -136,107 +136,107 @@ export const VESSEL_DWT = [
       '185000 - 189999',
       '190000 - 194999',
       '195000 - 199999',
-      '200000 +'
-    ]
-  }
-]
+      '200000 +',
+    ],
+  },
+];
 
 export const CII_IMO_VALUES = [
   {
     type: 'Chemical Tanker',
-    id:1,
+    id: 1,
     values: [
       {
         dwt: '0-4999',
-        imoValue: '52.6'
+        imoValue: '52.6',
       },
       {
         dwt: '5000-9999',
-        imoValue: '28.5'
+        imoValue: '28.5',
       },
       {
         dwt: '10000-19999',
-        imoValue: '17.4'
+        imoValue: '17.4',
       },
       {
         dwt: '20000-39999',
-        imoValue: '11.5'
+        imoValue: '11.5',
       },
       {
         dwt: '40000+',
-        imoValue: '7.8'
-      }
-    ]
+        imoValue: '7.8',
+      },
+    ],
   },
   {
     type: 'Oil Tanker',
-    id:2,
+    id: 2,
     values: [
       {
         dwt: '0-4999',
-        imoValue: '59.3'
+        imoValue: '59.3',
       },
       {
         dwt: '5000-9999',
-        imoValue: '35.6'
+        imoValue: '35.6',
       },
       {
         dwt: '10000-19999',
-        imoValue: '23.9'
+        imoValue: '23.9',
       },
       {
         dwt: '20000-59999',
-        imoValue: '11.1'
+        imoValue: '11.1',
       },
       {
         dwt: '60000-79999',
-        imoValue: '7.1'
+        imoValue: '7.1',
       },
       {
         dwt: '80000-119999',
-        imoValue: '5.2'
+        imoValue: '5.2',
       },
       {
         dwt: '120000-199999',
-        imoValue: '4.4'
+        imoValue: '4.4',
       },
       {
         dwt: '200000+',
-        imoValue: '2.7'
-      }
-    ]
+        imoValue: '2.7',
+      },
+    ],
   },
   {
     type: 'Bulk Carrier',
-    id:3,
+    id: 3,
     values: [
       {
         dwt: '0-9999',
-        imoValue: '22.8'
+        imoValue: '22.8',
       },
       {
         dwt: '10000-34999',
-        imoValue: '7.6'
+        imoValue: '7.6',
       },
       {
         dwt: '35000-59999',
-        imoValue: '5.4'
+        imoValue: '5.4',
       },
       {
         dwt: '60000-99999',
-        imoValue: '4.1'
+        imoValue: '4.1',
       },
       {
         dwt: '100000-199999',
-        imoValue: '2.7'
+        imoValue: '2.7',
       },
       {
         dwt: '200000+',
-        imoValue: '2.3'
-      }
-    ]
-  }
-]
+        imoValue: '2.3',
+      },
+    ],
+  },
+];
 
 
 // export const CII_IMO_VALUES = [
