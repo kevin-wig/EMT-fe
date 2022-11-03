@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
@@ -15,27 +15,23 @@ import {
   REPORT_TYPE_ENUM,
   REPORT_TYPE_OPTIONS,
   VESSEL_AGE_OPTIONS,
-  VESSEL_DWT
+  VESSEL_DWT,
 } from '../constants';
 import { YEARS_OPTION } from '../../../constants/Global';
 import { useVessel } from '../../../context/vessel.context';
 import { FUEL_TYPES_OPTIONS } from '../../../constants/FuelTypes';
-import LineChart from '../../../components/Charts/LineChart';
 import { newColor } from '../../../constants/ChartColors';
 import { reportSchema } from '../../../validations/report.schema';
 import { genYearArray } from '../../../utils/yearArray';
-import { MONTHS } from '../../../constants/Global';
 import { useAuth } from '../../../context/auth.context';
-import CommonTextField from "../../../components/Forms/CommonTextField";
 import moment from 'moment';
 import { SUPER_ADMIN } from '../../../constants/UserRoles';
-import MultiaxisChart from '../../../components/Charts/MultiaxisChart';
 import MultiaxisLineChart from '../../../components/Charts/MultiaxisLineChart';
-import BarChart from '../../../components/Charts/BarChart';
+import Chart from '../../../components/Charts/Chart';
 
-const _ = require("lodash")
+const _ = require('lodash');
 
-const PREFIX = "report-box";
+const PREFIX = 'report-box';
 const classes = {
   root: `${PREFIX}-root`,
   titleWrapper: `${PREFIX}-title-wrapper`,
@@ -53,88 +49,88 @@ const classes = {
   rangeWrapper: `${PREFIX}-range-wrapper`,
 };
 
-const Root = styled("div")(({ theme }) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {
-    maxWidth: "600px",
-    minWidth: "600px",
+    maxWidth: '600px',
+    minWidth: '600px',
     [`& > .${classes.card}`]: {
-      "&:first-of-type": {
-        marginBottom: "1rem",
+      '&:first-of-type': {
+        marginBottom: '1rem',
       },
     },
   },
   [`& .${classes.titleWrapper}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "1.5rem",
-    "& .MuiTypography-title": {
-      marginRight: "1rem",
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '1.5rem',
+    '& .MuiTypography-title': {
+      marginRight: '1rem',
     },
   },
   [`& .${classes.title}`]: {
-    display: "flex",
-    alignItems: "center",
+    display: 'flex',
+    alignItems: 'center',
   },
   [`& .${classes.kpiTitle}`]: {
-    maxWidth: "100%",
-    whiteSpace: "pre-wrap",
-    lineHeight: "1.5rem",
-    marginBottom: "1rem",
+    maxWidth: '100%',
+    whiteSpace: 'pre-wrap',
+    lineHeight: '1.5rem',
+    marginBottom: '1rem',
   },
   [`& .${classes.reportCardsWrapper}`]: {
     [`& .${classes.card}`]: {
-      minHeight: "8.5rem",
+      minHeight: '8.5rem',
     },
   },
   [`& .${classes.card}`]: {
-    width: "100%",
-    boxShadow: "0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important",
-    padding: "1.5rem",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    "&.cost": {
+    width: '100%',
+    boxShadow: '0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important',
+    padding: '1.5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    '&.cost': {
       background: theme.palette.info.main,
-      color: "#fff",
+      color: '#fff',
     },
   },
   [`& .${classes.input}`]: {
-    width: "100%",
+    width: '100%',
     margin: 0,
   },
   [`& .${classes.rangeWrapper}`]: {
     margin: `0 -${theme.spacing(1)}`,
-    display: "flex",
-    alignItems: "center",
-    "& > div": {
+    display: 'flex',
+    alignItems: 'center',
+    '& > div': {
       margin: `0 ${theme.spacing(1)}`,
     },
   },
   [`& .${classes.infoWrapper}`]: {},
   [`& .${classes.cardBody}`]: {
     padding: 0,
-    fontSize: "0.9rem",
+    fontSize: '0.9rem',
     flexGrow: 1,
-    "& p": {
-      marginBottom: "0.5rem",
+    '& p': {
+      marginBottom: '0.5rem',
     },
   },
   [`& .${classes.action}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "1.5rem",
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '1.5rem',
 
-    "& .MuiButton-root": {
-      marginBottom: "1rem",
-      "&:nth-of-type(2)": {
-        marginLeft: "auto",
-        marginRight: "0.5rem",
+    '& .MuiButton-root': {
+      marginBottom: '1rem',
+      '&:nth-of-type(2)': {
+        marginLeft: 'auto',
+        marginRight: '0.5rem',
       },
     },
   },
   [`& .${classes.getVesselsButton}`]: {
-    marginTop: "auto",
-    marginRight: "10px",
+    marginTop: 'auto',
+    marginRight: '10px',
   },
 }));
 
@@ -145,8 +141,8 @@ const ComparisonBox = ({
   fleets = [],
   vessels = [],
   vesselTypes = [],
-  vesselWeights = ["All"],
-  dwts = ["All"],
+  vesselWeights = ['All'],
+  dwts = ['All'],
   reportOption,
   onDelete = () => null,
   onUpdateOption,
@@ -155,11 +151,10 @@ const ComparisonBox = ({
   const {
     getReport,
     addReportedOptions,
-    updateReportedOptions,
     removeReportedOptions,
   } = useVessel();
 
-  const [charTitle, setChartTitle] = useState("");
+  const [charTitle, setChartTitle] = useState('');
   const [comparisonData, setComparisonData] = useState();
   const [comparisonVoyageData, setComparisonVoyageData] = useState();
   const [vesselList, setVesselList] = useState();
@@ -171,28 +166,28 @@ const ComparisonBox = ({
   const [fleetList, setFleetList] = useState(fleets);
   const [year, setYear] = useState(new Date().getFullYear());
   const [imoAverageMode, setIMOAverageMode] = useState(false);
-  const [selectedDWTList, setSelectedDWTList] = useState([])
-  const [multiaxisData, setMultiaxisData] = useState()
+  const [selectedDWTList, setSelectedDWTList] = useState([]);
+  const [multiaxisData, setMultiaxisData] = useState();
 
   const formik = useFormik({
     initialValues: {
-      reportType: "",
-      companyIds: admin ? [] : me?.company?.id || "",
+      reportType: '',
+      companyIds: admin ? [] : me?.company?.id || '',
       fuelType: [],
       vesselIds: [],
       fleets: [],
-      vesselAge: "",
+      vesselAge: '',
       vesselWeight: [0, 0],
-      dwt: ["", ""],
-      vesselType: "",
+      dwt: ['', ''],
+      vesselType: '',
     },
     validationSchema: reportSchema,
     onSubmit: async (values) => {
 
       const payload = {
         ...values,
-        dwt: values?.vesselType && values?.dwt && VESSEL_DWT.find(dwt => dwt.id === values?.vesselType)?.values[values?.dwt]?.split(/[-|+]/g).map(v => Number(v))
-      }
+        dwt: values?.vesselType && values?.dwt && VESSEL_DWT.find(dwt => dwt.id === values?.vesselType)?.values[values?.dwt]?.split(/[-|+]/g).map(v => Number(v)),
+      };
       const options = getParameters(payload);
       onUpdateOption(options);
 
@@ -200,37 +195,46 @@ const ComparisonBox = ({
         const data = res.data;
 
         let found;
-        if(options.vesselType){
-          found = CII_IMO_VALUES.filter(el => el.id == options.vesselType)
+        if (options.vesselType) {
+          found = CII_IMO_VALUES.filter((el) => +el.id === +options.vesselType);
+          const dwtRanges = found[0].values.map((el) => {
+            console.log(el.dwt);
+            return ({ range: el.dwt.split(/[+|-]/g).map(value => value ? +value : undefined), imoValue: el.imoValue })
+          });
+          data.chartData?.forEach((item) => {
+            item.data.forEach((dt) => {
+              const foundImo = dwtRanges.find(({ range }) => _.inRange(+dt.dwt, range[0], range[1] ?? Number.MAX_SAFE_INTEGER));
+              dt.imoValue = foundImo ? +foundImo?.imoValue : 0;
+            });
+          });
           let dwtSelected = VESSEL_DWT.find(el => el.id === options.vesselType)?.values[formik.values.dwt];
 
           if (dwtSelected) {
             let filteredDwt = found[0].values.filter(el => {
-              let dwtRange = el.dwt.split(/[+|-]/g).map(value => Number(value));
-              let dwtSelectedRange = dwtSelected.split(/[+|-]/g).map(value => Number(value));
+              let dwtRange = el.dwt.split(/[+|-]/g).map(value => +value);
+              let dwtSelectedRange = dwtSelected.split(/[+|-]/g).map(value => +value);
 
-              return dwtRange[1] > 0 ?  _.inRange(dwtSelectedRange[0], dwtRange[0], dwtRange[1]) || _.inRange(dwtSelectedRange[1], dwtRange[0], dwtRange[1]) : (dwtSelectedRange[0] >= dwtRange[0] && dwtSelectedRange[1] <= dwtRange[0]);
+              return dwtRange[1] > 0 ? _.inRange(dwtSelectedRange[0], dwtRange[0], dwtRange[1]) || _.inRange(dwtSelectedRange[1], dwtRange[0], dwtRange[1]) : (dwtSelectedRange[0] >= dwtRange[0] && dwtSelectedRange[1] <= dwtRange[0]);
             });
-            found = [{...found[0], values:filteredDwt}];
+            found = [{ ...found[0], values: filteredDwt }];
           }
-        }
-        else{
+        } else {
           found = CII_IMO_VALUES;
         }
 
         setMultiaxisData({
           labels: found.reduce((total, curr) => {
-            return [...total, ...curr.values.map(c => `${curr.type};${c.dwt}`)]
+            return [...total, ...curr.values.map(c => `${curr.type};${c.dwt}`)];
           }, []),
           datasets: [{
             label: 'CII Attained',
-            xAxisID:'xAxis1',
+            xAxisID: 'xAxis1',
             backgroundColor: newColor(2),
             data: found.reduce((total, curr) => {
-              return [...total, ...curr.values.map(v => Number(v.imoValue))]
-           }, [])
+              return [...total, ...curr.values.map(v => Number(v.imoValue))];
+            }, []),
           }],
-        })
+        });
 
         setComparisonData(data);
         addReportedOptions(id, options);
@@ -253,7 +257,7 @@ const ComparisonBox = ({
     //   "vesselIds",
     //   vessels?.map((vessel) => vessel?.id) || []
     // );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [companies, me, admin, vessels]);
 
   const valuableYears = useMemo(
@@ -265,10 +269,10 @@ const ComparisonBox = ({
             ...(dt?.data?.map((chartDatum) => +chartDatum.key || +year) || []),
             // eslint-disable-next-line react-hooks/exhaustive-deps
           ],
-          [year]
-        )
+          [year],
+        ),
       ),
-    [comparisonData, year]
+    [comparisonData, year],
   );
 
   useEffect(() => {
@@ -281,9 +285,9 @@ const ComparisonBox = ({
 
   useEffect(() => {
     if (comparisonData) {
-      formik.submitForm()
+      formik.submitForm();
     }
-  }, [changedPayload])
+  }, [changedPayload]);
 
   useEffect(() => {
     if (comparisonData) {
@@ -295,32 +299,32 @@ const ComparisonBox = ({
   useEffect(() => {
     const reportType = reportOption?.reportType;
     if (reportType === REPORT_TYPE_ENUM.CII) {
-      setChartTitle("CII Over time");
+      setChartTitle('CII Over time');
     } else if (reportType === REPORT_TYPE_ENUM.ETS) {
-      setChartTitle("ETS per vessel");
+      setChartTitle('ETS per vessel');
     } else if (reportType === REPORT_TYPE_ENUM.GHG) {
-      setChartTitle("GHGs per vessel");
+      setChartTitle('GHGs per vessel');
     }
   }, [reportOption?.reportType]);
 
   useEffect(() => {
-    const state = formik.values
+    const state = formik.values;
     const selectedVesselsList = vessels
       .filter((vessel) => !state.companyIds || !state.companyIds.length || state.companyIds.includes(vessel.companyId))
       .filter((vessel) => !state.fleets || !state.fleets.length || state.fleets.includes(vessel?.fleet?.id))
       .filter((vessel) => !state.vesselType || vessel.vesselTypeId === +state.vesselType)
       .filter((vessel, index) => {
         if (state.vesselAge) {
-          let [minYear, maxYear] = formik.values.vesselAge.split(",");
+          let [minYear, maxYear] = formik.values.vesselAge.split(',');
           const dateDiff = new Date() - new Date(vessel.dateOfBuilt);
           const oneYearMilli = 365 * 24 * 3600000;
 
-          if (state.vesselAge === "25+") {
+          if (state.vesselAge === '25+') {
             minYear = 0;
             maxYear = 10000;
           }
 
-          return dateDiff > minYear * oneYearMilli && dateDiff > maxYear * oneYearMilli
+          return dateDiff > minYear * oneYearMilli && dateDiff > maxYear * oneYearMilli;
         }
 
         return true;
@@ -331,7 +335,7 @@ const ComparisonBox = ({
     //   selectedVesselsList.map((vessel) => vessel?.id)
     // );
 
-    formik.setFieldValue("vesselIds", state.vesselIds.filter((vesselId) => selectedVesselsList.find(({ id }) => id === vesselId)));
+    formik.setFieldValue('vesselIds', state.vesselIds.filter((vesselId) => selectedVesselsList.find(({ id }) => id === vesselId)));
     setVesselList(selectedVesselsList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, vessels]);
@@ -341,30 +345,37 @@ const ComparisonBox = ({
     if (reportType === REPORT_TYPE_ENUM.CII) {
       const ciiLabels = selectedVessel ? selectedVessel.data.map((dt) => dt.name || dt.key) : chartData.map((data) => data.name);
       const datasets = selectedVessel
-        ? selectedVessel.data.map((dt, index) => {
-          const dataArray = new Array(ciiLabels.length).fill(0);
-          dataArray[index] = parseFloat(dt.cii)?.toFixed(3) || 0;
-          return {
-            label: dt.name || dt.key,
-            backgroundColor: newColor(index),
-            data: dataArray,
+        ?
+        [
+          {
+            backgroundColor: selectedVessel.data.map((_, index) => newColor(index)),
+            data: selectedVessel.data.map((dt) => parseFloat(dt.cii)?.toFixed(3) || 0),
             barPercentage: 0.7,
             categoryPercentage: 1,
             fill: true,
-          };
-        })
-        : chartData.map((dt, index) => {
-          const dataArray = new Array(ciiLabels.length).fill(0);
-          dataArray[index] = parseFloat(dt.data[0]?.cii)?.toFixed(3) || 0;
-          return {
-            label: dt.name,
-            backgroundColor: newColor(index),
-            data: dataArray,
+          }
+        ]
+        :
+        [
+          {
+            type: 'bar',
+            label: 'CII',
+            backgroundColor: chartData.map((_, index) => newColor(index)),
+            data: chartData.map((dt) => parseFloat(dt.data[0].cii)?.toFixed(3) || 0),
             barPercentage: 0.7,
             categoryPercentage: 1,
             fill: true,
-          };
-        });
+          },
+          {
+            type: 'line',
+            label: 'IMO',
+            borderColor: 'transparent',
+            fill: false,
+            backgroundColor: chartData.map((_, index) => newColor(index)),
+            data: chartData.map((dt) => parseFloat(dt.data[0].imoValue)?.toFixed(3) || 0),
+            categoryPercentage: 1,
+          },
+        ];
 
       setChartData({
         labels: ciiLabels,
@@ -377,23 +388,23 @@ const ComparisonBox = ({
         labels: vessels,
         datasets: [
           {
-            label: "EU CO2 emissions",
-            backgroundColor: "transparent",
+            label: 'EU CO2 emissions',
+            backgroundColor: 'transparent',
             borderColor: newColor(0),
             data: vessels.map(
               (vessel) =>
-                chartData.find((dt) => dt.name === vessel)?.emissions || 0
+                chartData.find((dt) => dt.name === vessel)?.emissions || 0,
             ),
             barPercentage: 0.7,
             categoryPercentage: 1,
             fill: true,
           },
           {
-            label: "EU ETS",
-            backgroundColor: "transparent",
+            label: 'EU ETS',
+            backgroundColor: 'transparent',
             borderColor: newColor(1),
             data: vessels.map(
-              (vessel) => chartData.find((dt) => dt.name === vessel)?.ets || 0
+              (vessel) => chartData.find((dt) => dt.name === vessel)?.ets || 0,
             ),
             barPercentage: 0.7,
             categoryPercentage: 1,
@@ -408,24 +419,24 @@ const ComparisonBox = ({
         labels: vessels,
         datasets: [
           {
-            label: "GHGs Target",
-            backgroundColor: "transparent",
+            label: 'GHGs Target',
+            backgroundColor: 'transparent',
             borderColor: newColor(0),
             data: vessels.map(
               (vessel) =>
-                chartData.find((dt) => dt.name === vessel)?.required || 0
+                chartData.find((dt) => dt.name === vessel)?.required || 0,
             ),
             barPercentage: 0.7,
             categoryPercentage: 1,
             fill: true,
           },
           {
-            label: "GHGs Actual",
-            backgroundColor: "transparent",
+            label: 'GHGs Actual',
+            backgroundColor: 'transparent',
             borderColor: newColor(1),
             data: vessels.map(
               (vessel) =>
-                chartData.find((dt) => dt.name === vessel)?.attained || 0
+                chartData.find((dt) => dt.name === vessel)?.attained || 0,
             ),
             barPercentage: 0.7,
             categoryPercentage: 1,
@@ -439,16 +450,16 @@ const ComparisonBox = ({
   const handleDblClickChart = (event) => {
     event.preventDefault();
     if (chartYear || selectedVessel) {
-      setSelectedVessel(undefined)
+      setSelectedVessel(undefined);
       setChartYear(undefined);
     } else {
     }
   };
 
-  const handleClickChart = (elements) => {
-    if (Array.isArray(elements) && elements.length > 0) {
+  const handleClickChart = (instance, elements) => {
+    if (elements.length > 0) {
       if (!selectedVessel) {
-        setSelectedVessel(comparisonVoyageData?.chartData?.[elements[0]._index]);
+        setSelectedVessel(comparisonVoyageData?.chartData?.[elements[0].index]);
       }
     }
   };
@@ -471,12 +482,12 @@ const ComparisonBox = ({
     }, {});
 
     if (reportOpt.vesselAge) {
-      if (reportOpt.vesselAge === "ALL") {
+      if (reportOpt.vesselAge === 'ALL') {
         reportOpt.vesselAge = undefined;
-      } else if (reportOpt.vesselAge === "50+") {
+      } else if (reportOpt.vesselAge === '50+') {
         reportOpt.vesselAge = [50];
       } else {
-        reportOpt.vesselAge = reportOpt.vesselAge.split(",").map((age) => +age);
+        reportOpt.vesselAge = reportOpt.vesselAge.split(',').map((age) => +age);
       }
     }
 
@@ -495,72 +506,72 @@ const ComparisonBox = ({
     onDelete();
   };
 
-  const modifyParamtersTiedToVesselType = (vesselTypeId, type= null, callback = null) => {
-    formik.setFieldValue("vesselType", vesselTypeId);
+  const modifyParamtersTiedToVesselType = (vesselTypeId, type = null, callback = null) => {
+    formik.setFieldValue('vesselType', vesselTypeId);
 
-    type !== "vessel" && setFilter(!filter);
-    let vesselType = vesselTypes.find(_vesselType => _vesselType.id === vesselTypeId)?.name
+    type !== 'vessel' && setFilter(!filter);
+    let vesselType = vesselTypes.find(_vesselType => _vesselType.id === vesselTypeId)?.name;
     let dwtList = VESSEL_DWT.find(dwt => dwt.type === vesselType)?.values;
-    let dwtUIList = dwtList?.map((dwt, i) => ({ key: i, label: dwt}))
+    let dwtUIList = dwtList?.map((dwt, i) => ({ key: i, label: dwt }));
     setSelectedDWTList(dwtUIList);
 
     if (callback) {
-      callback(dwtUIList)
+      callback(dwtUIList);
     }
-  }
+  };
 
   const handleVesselTypeChange = (e) => {
     const vesselType = e.target.value;
 
-    modifyParamtersTiedToVesselType(vesselType)
+    modifyParamtersTiedToVesselType(vesselType);
   };
 
   const handleVesselAgeChange = (e) => {
     const vesselAge = e.target.value;
-    formik.setFieldValue("vesselAge", vesselAge);
+    formik.setFieldValue('vesselAge', vesselAge);
     setFilter(!filter);
   };
 
   const handleOnVesselChange = (e) => {
-    setChangedPayload(!changedPayload)
+    setChangedPayload(!changedPayload);
     const vesselIds = e.target.value;
-    formik.setFieldValue("vesselIds", vesselIds);
+    formik.setFieldValue('vesselIds', vesselIds);
 
     if (vesselIds.length < 2) {
       vesselIds.forEach((vesselId) => {
         const fieldVessel = vessels.find((vessel) => vessel.id === vesselId);
-        const age = moment().diff(fieldVessel.dateOfBuilt, "years");
+        const age = moment().diff(fieldVessel.dateOfBuilt, 'years');
 
         const selectedAgeRange = VESSEL_AGE_OPTIONS.find((option) => {
-          const splittedOption = option.key.split(",")
+          const splittedOption = option.key.split(',');
 
           return _.inRange(age, Number(splittedOption[0]), Number(splittedOption[1]));
         });
 
-        formik.setFieldValue("vesselAge", selectedAgeRange?.key);
+        formik.setFieldValue('vesselAge', selectedAgeRange?.key);
 
-        modifyParamtersTiedToVesselType(fieldVessel.vesselTypeId, "vessel", (dwtList) => {
+        modifyParamtersTiedToVesselType(fieldVessel.vesselTypeId, 'vessel', (dwtList) => {
           const selectedRange = dwtList?.find((option) => {
             const splittedOption = option.label.split(/[-|+]/g);
 
-            return splittedOption[1] === "" ? fieldVessel.dwt >= splittedOption[0] : _.inRange(fieldVessel.dwt, Number(splittedOption[0]), Number(splittedOption[1]));
+            return splittedOption[1] === '' ? fieldVessel.dwt >= splittedOption[0] : _.inRange(fieldVessel.dwt, Number(splittedOption[0]), Number(splittedOption[1]));
           });
 
-          formik.setFieldValue("dwt", selectedRange?.key)
-        })
-      })
+          formik.setFieldValue('dwt', selectedRange?.key);
+        });
+      });
     } else {
-      formik.setFieldValue("vesselAge", "");
-      formik.setFieldValue("dwt", []);
-      formik.setFieldValue("vesselType", "");
+      formik.setFieldValue('vesselAge', '');
+      formik.setFieldValue('dwt', []);
+      formik.setFieldValue('vesselType', '');
     }
-  }
+  };
 
   const handleVesselDWTChange = (e) => {
-   const vesselDWT = e.target.value;
+    const vesselDWT = e.target.value;
 
-   formik.setFieldValue("dwt", vesselDWT)
-  }
+    formik.setFieldValue('dwt', vesselDWT);
+  };
 
   const handleChangeCompanyIds = (e) => {
     const selectedCompanies = companies.filter((company) => !e.target.value || !e.target.value.length || e.target.value.includes(company.id));
@@ -568,18 +579,18 @@ const ComparisonBox = ({
 
     setFleetList(fleets);
     setFilter(!filter);
-  }
+  };
 
   const handleChangeFleets = (e) => {
     setFilter(!filter);
     const filteredVessels = vessels.filter(vessel => e.target.value.includes(vessel?.fleet?.id));
     setVesselList(filteredVessels);
-    formik.setFieldValue("vesselIds", filteredVessels.map((vessel) => vessel.id));
-  }
+    formik.setFieldValue('vesselIds', filteredVessels.map((vessel) => vessel.id));
+  };
 
   const handleChangeYear = (value) => {
     setYear(value);
-  }
+  };
 
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
@@ -590,14 +601,14 @@ const ComparisonBox = ({
     } else {
       setIMOAverageMode(false);
     }
-    setFilter(!filter)
+    setFilter(!filter);
     handleChangeCompanyIds(e);
     formik.setFieldValue(
-      "vesselIds",
-      vessels?.map((vessel) => vessel?.id) || []
+      'vesselIds',
+      vessels?.map((vessel) => vessel?.id) || [],
     );
-    formik.getFieldProps("companyIds").onChange(e);
-  }
+    formik.getFieldProps('companyIds').onChange(e);
+  };
 
   return (
     <Root className={classes.root}>
@@ -620,7 +631,7 @@ const ComparisonBox = ({
                     options={REPORT_TYPE_OPTIONS}
                     optionLabel="label"
                     optionValue="key"
-                    {...formik.getFieldProps("reportType")}
+                    {...formik.getFieldProps('reportType')}
                     error={
                       formik.touched.reportType && formik.errors.reportType
                     }
@@ -632,11 +643,14 @@ const ComparisonBox = ({
                   <Typography component="p">Company</Typography>
                   <CommonSelect
                     className={classes.input}
-                    options={[...companies, { id:'imo_average', name: 'IMO average' }, me?.userRole?.role !== SUPER_ADMIN && { id: 'other_companies', name: 'Other companies' }]}
+                    options={[...companies, {
+                      id: 'imo_average',
+                      name: 'IMO average',
+                    }, me?.userRole?.role !== SUPER_ADMIN && { id: 'other_companies', name: 'Other companies' }]}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
-                    {...formik.getFieldProps("companyIds")}
+                    {...formik.getFieldProps('companyIds')}
                     onChange={(e) => handleCompanyChange(e)}
                   />
                 </Box>
@@ -650,11 +664,11 @@ const ComparisonBox = ({
                     multiple
                     optionLabel="name"
                     optionValue="id"
-                    {...formik.getFieldProps("fleets")}
+                    {...formik.getFieldProps('fleets')}
                     disabled={imoAverageMode}
                     onChange={(e) => {
                       handleChangeFleets(e);
-                      formik.getFieldProps("fleets").onChange(e);
+                      formik.getFieldProps('fleets').onChange(e);
                     }}
                   />
                 </Box>
@@ -669,7 +683,7 @@ const ComparisonBox = ({
                     optionLabel="label"
                     optionValue="key"
                     disabled={imoAverageMode}
-                    {...formik.getFieldProps("fuelType")}
+                    {...formik.getFieldProps('fuelType')}
                   />
                 </Box>
               </Grid>
@@ -680,7 +694,7 @@ const ComparisonBox = ({
                     className={classes.input}
                     options={VESSEL_AGE_OPTIONS}
                     onChange={handleVesselAgeChange}
-                    value={formik.values.vesselAge}$
+                    value={formik.values.vesselAge} $
                     optionLabel="label"
                     optionValue="key"
                     disabled={imoAverageMode}
@@ -705,15 +719,15 @@ const ComparisonBox = ({
                 <Box className={classes.wrapper}>
                   <Typography>Vessel DWT</Typography>
                   <Box className={classes.rangeWrapper}>
-                  <CommonSelect
-                    className={classes.input}
-                    options={selectedDWTList}
-                    onChange={handleVesselDWTChange}
-                    value={formik.values.dwt}
-                    optionLabel="label"
-                    optionValue="key"
-                    // disabled={imoAverageMode}
-                  />
+                    <CommonSelect
+                      className={classes.input}
+                      options={selectedDWTList}
+                      onChange={handleVesselDWTChange}
+                      value={formik.values.dwt}
+                      optionLabel="label"
+                      optionValue="key"
+                      // disabled={imoAverageMode}
+                    />
                   </Box>
                 </Box>
               </Grid>
@@ -726,7 +740,7 @@ const ComparisonBox = ({
                     options={vesselList}
                     optionLabel="name"
                     optionValue="id"
-                    {...formik.getFieldProps("vesselIds")}
+                    {...formik.getFieldProps('vesselIds')}
                     disabled={imoAverageMode}
                     onChange={handleOnVesselChange}
                   />
@@ -789,7 +803,7 @@ const ComparisonBox = ({
                   </Typography>
                   <Typography variant="subtitle2">
                     {parseFloat(comparisonData.totalEUEmissions)?.toFixed(3) ||
-                      0}
+                    0}
                   </Typography>
                 </Card>
               </Grid>
@@ -823,9 +837,7 @@ const ComparisonBox = ({
                     Net compliance units ({comparisonData.year})
                   </Typography>
                   <Typography variant="subtitle2">
-                    {parseFloat(
-                      comparisonData.totalNetComplianceUnits
-                    )?.toFixed(3) || 0}
+                    {parseFloat(comparisonData.totalNetComplianceUnits)?.toFixed(3) || 0}
                   </Typography>
                 </Card>
               </Grid>
@@ -836,7 +848,7 @@ const ComparisonBox = ({
                   </Typography>
                   <Typography variant="subtitle2">
                     {parseFloat(comparisonData.excessComplianceUnits)?.toFixed(
-                      2
+                      2,
                     ) || 0}
                   </Typography>
                 </Card>
@@ -865,11 +877,11 @@ const ComparisonBox = ({
           )}
           {chartData && !imoAverageMode ? (
             <Grid item xs={12} md={12}>
-              <BarChart
+              <Chart
                 xStack
                 title={charTitle}
                 data={chartData}
-                height={200}
+                height={400}
                 stepSize={1}
                 onDblClick={handleDblClickChart}
                 onClick={handleClickChart}
@@ -885,7 +897,7 @@ const ComparisonBox = ({
                 </Typography>
                 <Grid item xs={12} md={12}>
                   <MultiaxisLineChart
-                    title={"IMO Average CII Attained"}
+                    title={'IMO Average CII Attained'}
                     data={multiaxisData}
                     height={400}
                     stepSize={1}
