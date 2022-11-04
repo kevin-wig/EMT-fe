@@ -1,9 +1,35 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineController,
+  BarController,
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Title,
+  LineController,
+  BarController,
+);
 
 const PREFIX = 'StackBarChart';
 
@@ -82,7 +108,7 @@ const StackBarChart = ({
       },
     },
     scales: {
-      xAxes: [{
+      x: {
         time: {
           unit: 'month'
         },
@@ -98,8 +124,8 @@ const StackBarChart = ({
           maxTicksLimit: 5
         },
         maxBarThickness: 30,
-      }],
-      yAxes: [{
+      },
+      y: {
         scaleLabel: {
           display: true,
           labelString: 'Emissions'
@@ -108,7 +134,7 @@ const StackBarChart = ({
         gridLines: {
           display: true
         }
-      }],
+      },
     },
   };
 

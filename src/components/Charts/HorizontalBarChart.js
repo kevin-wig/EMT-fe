@@ -1,9 +1,54 @@
 import React from 'react';
-import { HorizontalBar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineController,
+  BarController,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Title,
+  LineController,
+  BarController,
+);
+
+export const options = {
+  indexAxis: 'y',
+  elements: {
+    bar: {
+      borderWidth: 2,
+    },
+  },
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'right',
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Horizontal Bar Chart',
+    },
+  },
+};
 
 const PREFIX = 'HorizontalBarChart';
 
@@ -56,6 +101,7 @@ const HorizontalBarChart = ({
   onClick = () => null,
 }) => {
   const options = {
+    indexAxis: 'y',
     maintainAspectRatio: false,
     legend: {
       display: true,
@@ -83,30 +129,26 @@ const HorizontalBarChart = ({
       },
     },
     scales: {
-      xAxes: [
-        {
-          ticks: {
-            max: xMax,
-            min: xMin,
-          },
-          stacked: false,
-          gridLines: {
-            color: '#e2e2e2',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: xLabel
-          }
+      x: {
+        ticks: {
+          max: xMax,
+          min: xMin,
         },
-      ],
-      yAxes: [
-        {
+        stacked: false,
+        gridLines: {
+          color: '#e2e2e2',
+        },
+        scaleLabel: {
           display: true,
-          gridLines: {
-            color: '#e2e2e2',
-          },
+          labelString: xLabel
+        }
+      },
+      y: {
+        display: true,
+        gridLines: {
+          color: '#e2e2e2',
         },
-      ],
+      },
     },
   };
 
@@ -116,7 +158,7 @@ const HorizontalBarChart = ({
         <Typography>{title}</Typography>
       </Box>
       <Box className={classes.cardBody}>
-        <HorizontalBar data={data} options={options} onElementsClick={onClick} />
+        <Bar data={data} options={options} onElementsClick={onClick} />
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>

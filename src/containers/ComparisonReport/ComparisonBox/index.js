@@ -26,8 +26,8 @@ import { genYearArray } from '../../../utils/yearArray';
 import { useAuth } from '../../../context/auth.context';
 import moment from 'moment';
 import { SUPER_ADMIN } from '../../../constants/UserRoles';
-import MultiaxisLineChart from '../../../components/Charts/MultiaxisLineChart';
 import Chart from '../../../components/Charts/Chart';
+import LineChart from '../../../components/Charts/LineChart';
 
 const _ = require('lodash');
 
@@ -228,7 +228,6 @@ const ComparisonBox = ({
           }, []),
           datasets: [{
             label: 'CII Attained',
-            xAxisID: 'xAxis1',
             backgroundColor: newColor(2),
             data: found.reduce((total, curr) => {
               return [...total, ...curr.values.map(v => Number(v.imoValue))];
@@ -896,7 +895,7 @@ const ComparisonBox = ({
                   IMO average values
                 </Typography>
                 <Grid item xs={12} md={12}>
-                  <MultiaxisLineChart
+                  <LineChart
                     title={'IMO Average CII Attained'}
                     data={multiaxisData}
                     height={400}

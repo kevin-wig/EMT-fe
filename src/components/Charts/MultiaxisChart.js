@@ -1,9 +1,35 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineController,
+  BarController,
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Title,
+  LineController,
+  BarController,
+);
 
 const PREFIX = 'MultiaxisChart';
 
@@ -88,56 +114,50 @@ const MultiaxisChart = ({
       },
     },
     scales: scales ? scales : {
-      xAxes: [
-        {
-          stacked: stack,
-          gridLines: {
-            color: 'transparent',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: xLabel
-          }
+      x:{
+        stacked: stack,
+        gridLines: {
+          color: 'transparent',
         },
-      ],
-      yAxes: [
-        {
-          id: 'y-axis-1',
-          position: 'left',
-          ticks: {
-            max: yMax,
-            min: 0,
-            stepSize: 0.005,
-            maxTicksLimit: yMaxTicksLimit || 8,
-          },
-          scaleLabel: {
-            display: true,
-            labelString: y1Label
-          } ,
+        scaleLabel: {
           display: true,
-          gridLines: {
-            color: '#e2e2e2',
-          },
+          labelString: xLabel
+        }
+      },
+      'y-axis-1': {
+        position: 'left',
+        ticks: {
+          max: yMax,
+          min: 0,
+          stepSize: 0.005,
+          maxTicksLimit: yMaxTicksLimit || 8,
         },
-        {
-            id: 'y-axis-2',
-            position: 'right',
-            ticks: {
-              max: yMax,
-              min: 0,
-              stepSize: 0.005,
-              maxTicksLimit: yMaxTicksLimit || 8,
-            },
-            scaleLabel: {
-              display: true,
-              labelString: y2Label
-            } ,
-            display: true,
-            gridLines: {
-              color: '#e2e2e2',
-            },
-          },
-      ],
+        scaleLabel: {
+          display: true,
+          labelString: y1Label
+        } ,
+        display: true,
+        gridLines: {
+          color: '#e2e2e2',
+        },
+      },
+      'y-axis-2': {
+        position: 'right',
+        ticks: {
+          max: yMax,
+          min: 0,
+          stepSize: 0.005,
+          maxTicksLimit: yMaxTicksLimit || 8,
+        },
+        scaleLabel: {
+          display: true,
+          labelString: y2Label
+        } ,
+        display: true,
+        gridLines: {
+          color: '#e2e2e2',
+        },
+      },
     },
   };
 
