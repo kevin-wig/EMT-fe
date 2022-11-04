@@ -1,9 +1,35 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineController,
+  BarController,
+} from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Title,
+  LineController,
+  BarController,
+);
 
 const PREFIX = 'BarChart';
 
@@ -90,36 +116,32 @@ const BarChart = ({
       },
     },
     scales: scales ? scales : {
-      xAxes: [
-        {
-          stacked: xStack,
-          gridLines: {
-            color: 'transparent',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: xLabel
-          }
+      x: {
+        stacked: xStack,
+        gridLines: {
+          color: 'transparent',
         },
-      ],
-      yAxes: [
-        {
-          ticks: {
-            max: yMax,
-            min: 0,
-            stepSize: 0.005,
-            maxTicksLimit: yMaxTicksLimit || 8,
-          },
+        scaleLabel: {
           display: true,
-          gridLines: {
-            color: '#e2e2e2',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: yLabel
-          }
+          labelString: xLabel
+        }
+      },
+      y: {
+        ticks: {
+          max: yMax,
+          min: 0,
+          stepSize: 0.005,
+          maxTicksLimit: yMaxTicksLimit || 8,
         },
-      ],
+        display: true,
+        gridLines: {
+          color: '#e2e2e2',
+        },
+        scaleLabel: {
+          display: true,
+          labelString: yLabel
+        }
+      },
     },
   };
 

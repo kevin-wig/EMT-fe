@@ -1,9 +1,35 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  LineController,
+  BarController,
+} from 'chart.js';
+import { Chart } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
+
+ChartJS.register(
+  LinearScale,
+  CategoryScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  Legend,
+  Tooltip,
+  Title,
+  LineController,
+  BarController,
+);
 
 const PREFIX = 'LineChart';
 
@@ -95,34 +121,30 @@ const LineChart = ({
       },
     },
     scales: {
-      xAxes: [
-        {
-          reverse: true,
-          gridLines: {
-            color: '#e2e2e2',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: xLabel
-          }
+      x: {
+        reverse: true,
+        gridLines: {
+          color: '#e2e2e2',
         },
-      ],
-      yAxes: [
-        {
-          ticks: {
-            stepSize: stepSize || 0.005,
-            maxTicksLimit: yMaxTicksLimit || 8,
-          },
+        scaleLabel: {
           display: true,
-          gridLines: {
-            color: '#e2e2e2',
-          },
-          scaleLabel: {
-            display: true,
-            labelString: yLabel
-          }
+          labelString: xLabel
+        }
+      },
+      y: {
+        ticks: {
+          stepSize: stepSize || 0.005,
+          maxTicksLimit: yMaxTicksLimit || 8,
         },
-      ],
+        display: true,
+        gridLines: {
+          color: '#e2e2e2',
+        },
+        scaleLabel: {
+          display: true,
+          labelString: yLabel
+        }
+      },
     },
   };
 
@@ -132,7 +154,7 @@ const LineChart = ({
         <Typography>{title}</Typography>
       </Box>
       <Box className={classes.cardBody} onDoubleClick={onDblClick}>
-        <Line data={data} options={options} onElementsClick={onClick} />
+        <Chart data={data} options={options} onElementsClick={onClick} type="line" />
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>

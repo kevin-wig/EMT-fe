@@ -573,7 +573,7 @@ const Voyage = () => {
         ],
       };
     }
-    return {};
+    return { labels: [], datasets: [] };
   }, [costChartPerVoyage]);
 
   const cumulativeEuaPerVoyage = useMemo(() => {
@@ -998,39 +998,35 @@ const Voyage = () => {
                 updatedDate="Updated yesterday at 11:59 PM"
                 data={costPerVoyage}
                 scales={{
-                  xAxes: [
-                    {
-                      time: {
-                        unit: "month",
-                      },
-                      gridLines: {
-                        display: false,
-                      },
-                      ticks: {
-                        maxTicksLimit: 5,
-                      },
-                      maxBarThickness: 30,
-                      stacked: true,
-                      scaleLabel: {
-                        display: true,
-                        labelString: "Voyage ID"
-                      }
+                  x: {
+                    time: {
+                      unit: "month",
                     },
-                  ],
-                  yAxes: [
-                    {
-                      ticks: {
-                        min: 0,
-                      },
-                      gridLines: {
-                        display: true,
-                      },
-                      scaleLabel: {
-                        display: true,
-                        labelString: "Cost (€)"
-                      }
+                    gridLines: {
+                      display: false,
                     },
-                  ],
+                    ticks: {
+                      maxTicksLimit: 5,
+                    },
+                    maxBarThickness: 30,
+                    stacked: true,
+                    scaleLabel: {
+                      display: true,
+                      labelString: "Voyage ID"
+                    }
+                  },
+                  y: {
+                    ticks: {
+                      min: 0,
+                    },
+                    gridLines: {
+                      display: true,
+                    },
+                    scaleLabel: {
+                      display: true,
+                      labelString: "Cost (€)"
+                    }
+                  },
                 }}
               />
             </Grid>
