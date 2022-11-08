@@ -196,7 +196,7 @@ const Vessel = () => {
             items={YEARS_OPTION}
             onChange={(value) => setSelectedYear(value)}
           />
-          {[SUPER_ADMIN].includes(me?.userRole?.role) && (
+          {[SUPER_ADMIN, COMPANY_EDITOR].includes(me?.userRole?.role) && (
             <CommonButton onClick={() => history.push('/vessels/create')}>Create vessel</CommonButton>
           )}
         </Box>
