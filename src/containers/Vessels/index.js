@@ -19,6 +19,7 @@ import { COMPANY_EDITOR, SUPER_ADMIN } from '../../constants/UserRoles';
 import CommonMenu from '../../components/Forms/CommonMenu';
 import { YEARS_OPTION } from '../../constants/Global';
 import {download} from "../../utils/download";
+import { useCompany } from '../../context/company.context';
 
 const PREFIX = 'Vessels';
 const classes = {
@@ -58,6 +59,7 @@ const Vessel = () => {
   const { pagination, vesselLists, getVesselsList, createVessels, fuels, getFuels } = useVessel();
   const { fleets, getFleets } = useFleet();
   const { notify } = useSnackbar();
+  const { filterCompany } = useCompany();
 
   const history = useHistory();
 
@@ -77,7 +79,7 @@ const Vessel = () => {
         getFleets();
       }
 
-      getVesselsList({ year: selectedYear, page, limit });
+      getVesselsList({ year: selectedYear, page, limit, companyId: filterCompany });
       getFuels();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,10 +87,10 @@ const Vessel = () => {
 
   useEffect(() => {
     if (getVesselsList) {
-      getVesselsList({ year: selectedYear, page, limit, sortBy, order, search });
+      getVesselsList({ year: selectedYear, page, limit, sortBy, order, search, companyId: filterCompany });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, limit, sortBy, order, search, selectedYear]);
+  }, [page, limit, sortBy, order, search, selectedYear, filterCompany]);
 
   const columns = [
     {
@@ -156,7 +158,7 @@ const Vessel = () => {
   const handleSaveUpload = () => {
     createVessels(parsedData)
       .then(() => {
-        getVesselsList({ year: selectedYear, page, limit, sortBy, order, search });
+        getVesselsList({ year: selectedYear, page, limit, sortBy, order, search, companyId: filterCompany });
         notify('Created successfully!');
       })
       .catch((err) => {
@@ -167,7 +169,7 @@ const Vessel = () => {
   };
 
   const handleFilter = (params) => {
-    getVesselsList({ year: selectedYear, page, limit, sortBy, order, search, ...params });
+    getVesselsList({ year: selectedYear, page, limit, sortBy, order, search, ...params, companyId: filterCompany });
   };
 
   const handleChangeSort = (value) => {

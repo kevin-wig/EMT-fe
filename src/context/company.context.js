@@ -10,6 +10,7 @@ const CompanyContext = React.createContext({});
  */
 function CompanyProvider(props) {
   const [company, setCompany] = useState();
+  const [filterCompany, setFilterCompany] = useState();
   const [companies, setCompanies] = useState();
   const [totalCount, setTotalCount] = useState(0);
   const [pagination, setPagination] = useState({
@@ -336,6 +337,8 @@ function CompanyProvider(props) {
         createVesselOnboardingLink,
         deleteVesselOnboardingLink,
         getImoList,
+        filterCompany,
+        setFilterCompany,
       }}
       {...props}
     />

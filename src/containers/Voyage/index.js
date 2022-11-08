@@ -155,12 +155,12 @@ const Voyage = () => {
     createVesselTrips,
   } = useVessel();
   const { notify } = useSnackbar();
-  const { companies, getCompanies } = useCompany();
+  const { companies, getCompanies, filterCompany } = useCompany();
 
   const history = useHistory();
 
   const [selectedTab, setSelectedTab] = useState(JOURNEY_OPTION.CII);
-  const [companyId, setCompany] = useState(-1);
+  const [companyId, setCompanyId] = useState(-1);
   const [vesselId, setVesselId] = useState(-1);
   const [trips, setTrips] = useState([]);
   const [page, setPage] = useState(1);
@@ -302,7 +302,9 @@ const Voyage = () => {
 
   useEffect(() => {
     if (me?.userRole?.role === SUPER_ADMIN) {
-      getCompanies();
+      getCompanies().then(() => {
+        setCompanyId(filterCompany);
+      });
     }
 
     getVessels(-1);
@@ -768,7 +770,7 @@ const Voyage = () => {
   const handleFilterByCompany = (e) => {
     const companyId = e.target.value;
     getVessels(companyId);
-    setCompany(e.target.value);
+    setCompanyId(e.target.value);
   };
 
   const handleDelete = (id) => {

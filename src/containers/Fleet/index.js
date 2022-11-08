@@ -53,7 +53,7 @@ const Fleet = () => {
   const { me } = useAuth();
   const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
   const { fleets, getFleetsList, pagination } = useFleet();
-  const { companies, getCompanies } = useCompany();
+  const { companies, getCompanies, filterCompany } = useCompany();
   const history = useHistory();
 
   const [companyId, setCompanyId] = useState(-1);
@@ -78,7 +78,9 @@ const Fleet = () => {
   useEffect(() => {
     getFleetsList({ page, limit });
     if (isSuperAdmin) {
-      getCompanies();
+      getCompanies().then(() => {
+        setCompanyId(filterCompany);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuperAdmin]);

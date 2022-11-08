@@ -77,12 +77,12 @@ const DeleteMsg = styled('p')(() => ({
 const Users = () => {
   const { me } = useAuth();
   const { users, removeUser, getUsersList, pagination } = useUser();
-  const { companies, getCompanies } = useCompany();
+  const { companies, getCompanies, filterCompany } = useCompany();
   const history = useHistory();
 
   const [, setTableData] = useState([]);
   const [deletingUser, setDeletingUser] = useState();
-  const [companyId, setCompany] = useState(-1);
+  const [companyId, setCompanyId] = useState(-1);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -103,7 +103,9 @@ const Users = () => {
   useEffect(() => {
     getUsersList({ page, limit });
     if (me?.userRole?.role === SUPER_ADMIN) {
-      getCompanies();
+      getCompanies().then(() => {
+        setCompanyId(filterCompany);
+      });
     }
   }, []);
 
@@ -196,7 +198,7 @@ const Users = () => {
   }
 
   const handleFilter = (e) => {
-    setCompany(e.target.value);
+    setCompanyId(e.target.value);
   };
 
   const handleChangeSort = (value) => {
