@@ -69,11 +69,6 @@ const VesselDetail = ({ match }) => {
     <Root className={classes.root} ref={containerRef}>
       <Box className={classes.title}>
         <Typography variant="title">{vessel.name}</Typography>
-        <Box>
-          {[SUPER_ADMIN, COMPANY_EDITOR].includes(me?.userRole?.role) && (
-            <CommonButton onClick={() => history.push('/vessels/create')}>Create vessel</CommonButton>
-          )}
-        </Box>
       </Box>
       <Box sx={{ display: 'flex', marginBottom: '1rem' }}>
         <Box>
