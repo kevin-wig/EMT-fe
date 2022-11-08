@@ -90,7 +90,7 @@ const MixedChart = ({
       display: true,
       fullWidth: false,
     },
-    events: ['click'],
+    events: ['click', 'mousemove'],
     tooltips: {
       intersect: false,
       callbacks: {

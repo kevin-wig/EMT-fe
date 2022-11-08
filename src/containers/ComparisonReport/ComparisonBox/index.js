@@ -357,22 +357,25 @@ const ComparisonBox = ({
         :
         [
           {
+            type: 'line',
+            label: 'IMO Average',
+            borderColor: 'rgb(255, 255, 255)',
+            borderWidth: 3,
+            pointRadius: 10,
+            pointHoverRadius: 11,
+            showLine: false,
+            fill: false,
+            backgroundColor: chartData.map((_, index) => newColor(index)),
+            data: chartData.map((dt) => parseFloat(dt.data[0].imoValue)?.toFixed(3) || 0),
+            categoryPercentage: 1,
+          },
+          {
             type: 'bar',
             label: 'CII',
             backgroundColor: chartData.map((_, index) => newColor(index)),
             data: chartData.map((dt) => parseFloat(dt.data[0].cii)?.toFixed(3) || 0),
             barPercentage: 0.7,
-            categoryPercentage: 1,
             fill: true,
-          },
-          {
-            type: 'line',
-            label: 'IMO',
-            borderColor: 'transparent',
-            fill: false,
-            backgroundColor: chartData.map((_, index) => newColor(index)),
-            data: chartData.map((dt) => parseFloat(dt.data[0].imoValue)?.toFixed(3) || 0),
-            categoryPercentage: 1,
           },
         ];
 
