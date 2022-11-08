@@ -67,6 +67,8 @@ const Dashboard = () => {
     exportVesselsEtsAsPdf,
     exportVesselsGhgAsPdf,
     filterParams,
+    filterCompany,
+    setFilterCompany,
   } = useCompany();
   const {
     vesselTypes,
@@ -82,8 +84,12 @@ const Dashboard = () => {
   const [voyageType, setVoyageType] = useState(["PREDICTED", "ACTUAL"]);*/
 
   useEffect(() => {
+    setFilterCompany(company);
+  }, [company]);
+
+  useEffect(() => {
     if (companies && isSuperAdmin) {
-      setCompany(companies[0]?.id);
+      setCompany(filterCompany || companies[0]?.id);
     } else if (me?.company?.id) {
       setCompany(me?.company?.id);
     }
