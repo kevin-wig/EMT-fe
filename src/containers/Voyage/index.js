@@ -1,27 +1,26 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import Grid from "@mui/material/Grid";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import Typography from "@mui/material/Typography";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
+import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import Grid from '@mui/material/Grid';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import moment from 'moment';
 import Dropzone from '../../components/Forms/Dropzone';
-import BarChart from "../../components/Charts/BarChart";
-import LineChart from "../../components/Charts/LineChart";
-import StackBarChart from "../../components/Charts/StackBarChart";
-import CommonButton from "../../components/Buttons/CommonButton";
-import CommonMenu from "../../components/Forms/CommonMenu";
-import CommonDatePicker from "../../components/Forms/DatePicker";
-import CommonSelect from "../../components/Forms/CommonSelect";
-import Modal from "../../components/Modals/Modal";
-import DataTable from "../../components/Table/DataTable";
-import { newColor } from "../../constants/ChartColors";
-import { excelVoyageParse, getVoyageSample } from "../../services/vessel.service";
+import BarChart from '../../components/Charts/BarChart';
+import LineChart from '../../components/Charts/LineChart';
+import CommonButton from '../../components/Buttons/CommonButton';
+import CommonMenu from '../../components/Forms/CommonMenu';
+import CommonDatePicker from '../../components/Forms/DatePicker';
+import CommonSelect from '../../components/Forms/CommonSelect';
+import Modal from '../../components/Modals/Modal';
+import DataTable from '../../components/Table/DataTable';
+import { newColor } from '../../constants/ChartColors';
+import { excelVoyageParse, getVoyageSample } from '../../services/vessel.service';
 import MultiaxisChart from '../../components/Charts/MultiaxisChart';
 
 import {
@@ -30,17 +29,17 @@ import {
   FUEL_GRADES,
   JOURNEY_OPTION,
   YEARS_OPTION,
-} from "../../constants/Global";
-import { COMPANY_EDITOR, SUPER_ADMIN, VIEWER } from "../../constants/UserRoles";
-import { useAuth } from "../../context/auth.context";
-import { useVessel } from "../../context/vessel.context";
-import { useSnackbar } from "../../context/snack.context";
-import { useCompany } from "../../context/company.context";
-import { download } from "../../utils/download";
-import { getScreenShot } from "../../utils/exportAsPdf";
-import { CII_COLUMNS, ETS_COLUMNS } from "./constants";
+} from '../../constants/Global';
+import { COMPANY_EDITOR, SUPER_ADMIN, VIEWER } from '../../constants/UserRoles';
+import { useAuth } from '../../context/auth.context';
+import { useVessel } from '../../context/vessel.context';
+import { useSnackbar } from '../../context/snack.context';
+import { useCompany } from '../../context/company.context';
+import { download } from '../../utils/download';
+import { getScreenShot } from '../../utils/exportAsPdf';
+import { CII_COLUMNS, ETS_COLUMNS } from './constants';
 
-const PREFIX = "vessel-voyage";
+const PREFIX = 'vessel-voyage';
 const classes = {
   root: `${PREFIX}-root`,
   title: `${PREFIX}-title`,
@@ -58,31 +57,31 @@ const classes = {
   toggle: `${PREFIX}-toggle`,
 };
 
-const Root = styled("div")(({ theme }) => ({
+const Root = styled('div')(({ theme }) => ({
   [`&.${classes.root}`]: {},
   [`& .${classes.title}`]: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: "1.5rem",
-    marginBottom: "1.5rem",
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '1.5rem',
+    marginBottom: '1.5rem',
   },
   [`& .${classes.card}`]: {
-    width: "100%",
-    boxShadow: "0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important",
-    padding: "1.5rem",
-    marginBottom: "1rem",
+    width: '100%',
+    boxShadow: '0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important',
+    padding: '1.5rem',
+    marginBottom: '1rem',
   },
   [`& .${classes.fileAction}`]: {
-    marginTop: "1rem",
-    display: "flex",
-    justifyContent: "space-between",
+    marginTop: '1rem',
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   [`& .${classes.menu}`]: {
-    marginRight: "1rem",
+    marginRight: '1rem',
   },
   [`& .${classes.filterWrapper}`]: {
-    display: "flex",
-    flexWrap: "wrap",
+    display: 'flex',
+    flexWrap: 'wrap',
   },
   [`& .${classes.dataTable}`]: {
     marginTop: 24,
@@ -90,14 +89,14 @@ const Root = styled("div")(({ theme }) => ({
   [`& .${classes.filter}`]: {
     marginRight: theme.spacing(2),
     // marginBottom: theme.spacing(2),
-    minWidth: "150px",
+    minWidth: '150px',
   },
   [`& .${classes.importSelect}`]: {
     marginRight: theme.spacing(1),
-    minWidth: "100px",
+    minWidth: '100px',
   },
   [`& .${classes.exportAs}`]: {
-    marginLeft: "auto",
+    marginLeft: 'auto',
     marginBottom: theme.spacing(2),
   },
   [`& .${classes.button}`]: {
@@ -105,35 +104,35 @@ const Root = styled("div")(({ theme }) => ({
     marginBottom: theme.spacing(2),
   },
   [`& .${classes.action}`]: {
-    height: "2rem",
-    minWidth: "2rem",
-    padding: "0",
-    borderRadius: "50%",
+    height: '2rem',
+    minWidth: '2rem',
+    padding: '0',
+    borderRadius: '50%',
     color: theme.palette.surface[0],
-    "&:not(:last-of-type)": {
-      marginRight: "0.5rem !important",
+    '&:not(:last-of-type)': {
+      marginRight: '0.5rem !important',
     },
-    "&.view": {
+    '&.view': {
       background: theme.palette.primary.main,
     },
-    "&.delete": {
+    '&.delete': {
       background: theme.palette.error.main,
     },
-    [theme.breakpoints.down("md")]: {
-      marginLeft: "0 !important",
-      marginRight: "1.5rem !important",
-      order: "1 !important",
+    [theme.breakpoints.down('md')]: {
+      marginLeft: '0 !important',
+      marginRight: '1.5rem !important',
+      order: '1 !important',
     },
   },
   [`& .${classes.toggle}`]: {
-    marginRight: "0.5rem",
+    marginRight: '0.5rem',
   },
 }));
 
-const DeleteMsg = styled("p")(() => ({
+const DeleteMsg = styled('p')(() => ({
   [`&.${classes.deleteMsg}`]: {
     margin: 0,
-    fontSize: "1rem",
+    fontSize: '1rem',
   },
 }));
 
@@ -171,9 +170,9 @@ const Voyage = () => {
     totalCount: 0,
     totalPages: 0,
   });
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState();
-  const [order, setOrder] = useState("DESC");
+  const [order, setOrder] = useState('DESC');
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [deletingVoyage, setDeletingVoyage] = useState();
@@ -185,7 +184,7 @@ const Voyage = () => {
   const [etsChartPerVoyage, setEtsChartPerVoyage] = useState();
   const [fuelChartData, setFuelChartData] = useState([]);
   const [euaPercentChart, setEuaPercentChart] = useState();
-  const [voyageType, setVoyageType] = useState("VISIABLE");
+  const [voyageType, setVoyageType] = useState('VISIABLE');
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
@@ -197,12 +196,12 @@ const Voyage = () => {
       page,
       limit,
       search,
-      voyageType: voyageType === 'VISIABLE' ? ["PREDICTED", "ACTUAL", "ARCHIVED"] : [voyageType],
+      voyageType: voyageType === 'VISIABLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
       journeyType: selectedTab,
       ...(+vesselId !== -1 && { vesselId }),
       ...(+companyId !== -1 && { companyId }),
       fromDate: year === 'no_year' ? fromDate?.toISOString() : moment(year, 'year').startOf('year').toISOString(),
-      toDate: year === 'no_year' ? toDate?.toISOString() : moment(year, 'year').endOf('year').toISOString()
+      toDate: year === 'no_year' ? toDate?.toISOString() : moment(year, 'year').endOf('year').toISOString(),
     }),
     [
       order,
@@ -216,8 +215,8 @@ const Voyage = () => {
       companyId,
       fromDate,
       toDate,
-      year
-    ]
+      year,
+    ],
   );
 
   const getCIIData = useCallback(
@@ -230,16 +229,16 @@ const Voyage = () => {
         setStackChartData(res.data);
       });
 
-      getVoyageCIIChart(filterParams, "TRIP").then((res) => {
+      getVoyageCIIChart(filterParams, 'TRIP').then((res) => {
         setCiiPerTrip(res.data);
       });
-      
+
       getVesselFuelChartPerVoyage(filterParams.vesselId, filterParams.fromDate, filterParams.toDate).then((res) => {
         setFuelChartData(res.data);
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getVoyageCIIChart]
+    [getVoyageCIIChart],
   );
 
   const getETSData = useCallback(
@@ -255,13 +254,13 @@ const Voyage = () => {
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getVoyageCIIChart]
+    [getVoyageCIIChart],
   );
 
   const companyFilters = useMemo(() => {
-    const all = { name: "All companies", id: -1 };
+    const all = { name: 'All companies', id: -1 };
     if (companies?.length > 0) {
-      companies.sort((a, b) => a.name.localeCompare(b.name))
+      companies.sort((a, b) => a.name.localeCompare(b.name));
       return [all, ...companies];
     } else {
       return [all];
@@ -269,16 +268,21 @@ const Voyage = () => {
   }, [companies]);
 
   const vesselFilters = useMemo(() => {
-    const all = { name: "All vessels", id: -1 };
-    if (vessels?.length > 0) {
-      vessels.sort((a, b) => a.name.localeCompare(b.name))
+    const all = { name: 'All vessels', id: -1 };
+    let filteredVessels = [...vessels];
+    if (filteredVessels?.length > 0) {
+      filteredVessels.sort((a, b) => a.name.localeCompare(b.name));
+
+      if (me?.userRole?.role !== SUPER_ADMIN) {
+        filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === me?.companyId);
+      }
+
       if (history.location.state) {
-        setVesselId(history.location.state)
+        setVesselId(history.location.state);
+      } else {
+        setVesselId(filteredVessels[0].id);
       }
-      else {
-        setVesselId(vessels[0].id)
-      }
-      return [all, ...vessels];
+      return [all, ...filteredVessels];
     } else {
       return [all];
     }
@@ -293,7 +297,7 @@ const Voyage = () => {
       })
       .catch((err) => {
         if (err?.response?.data) {
-          notify(err.response.data.message, "error");
+          notify(err.response.data.message, 'error');
         }
       });
 
@@ -305,6 +309,8 @@ const Voyage = () => {
       getCompanies().then(() => {
         setCompanyId(filterCompany);
       });
+    } else {
+      setCompanyId(me?.companyId);
     }
 
     getVessels(-1);
@@ -334,17 +340,17 @@ const Voyage = () => {
       ...(borderDash && { borderDash: [4, 4] }),
       data,
     }),
-    []
+    [],
   );
 
   const ciiChartPerVoyage = useMemo(() => {
     const ciiLabels = ciiPerTrip.map((voyage) => `${voyage.voyageId}`);
-    const ciiLabelsAndIds = ciiPerTrip.map(voyage => ({ voyageId: voyage.voyageId, id: voyage.id }))
+    const ciiLabelsAndIds = ciiPerTrip.map(voyage => ({ voyageId: voyage.voyageId, id: voyage.id }));
 
     let emissionSum = 0;
     let distanceSum = 0;
 
-    const calculatedCiiPerTrip = [...ciiPerTrip]
+    const calculatedCiiPerTrip = [...ciiPerTrip];
     calculatedCiiPerTrip.map((voyage, index) => {
       if (voyage.vesselId !== ciiPerTrip[index - 1]?.vesselId) {
         emissionSum = 0;
@@ -355,12 +361,21 @@ const Voyage = () => {
       distanceSum += parseFloat(voyage.distance) || 0;
 
       return voyage.calculatedCii = (1000000 * emissionSum) / distanceSum / voyage.dwt;
-    })
+    });
 
-    const actualPoints = calculatedCiiPerTrip.filter(q => q.voyageType === "ACTUAL").map(item => ({ id: item.id, calculatedCii: item.calculatedCii || null, requiredCII: item.requiredCII || null }))
-    const actualPointIds = actualPoints.map(item => item.id)
+    const actualPoints = calculatedCiiPerTrip.filter(q => q.voyageType === 'ACTUAL').map(item => ({
+      id: item.id,
+      calculatedCii: item.calculatedCii || null,
+      requiredCII: item.requiredCII || null,
+    }));
+    const actualPointIds = actualPoints.map(item => item.id);
 
-    const predictedPoints = calculatedCiiPerTrip.filter(q => q.voyageType === "PREDICTED" && !actualPointIds.includes(q.id)).map(item => ({ id: item.id, calculatedCii: item.calculatedCii || null, requiredCII: item.requiredCII || null , cii: item.cii || null }))
+    const predictedPoints = calculatedCiiPerTrip.filter(q => q.voyageType === 'PREDICTED' && !actualPointIds.includes(q.id)).map(item => ({
+      id: item.id,
+      calculatedCii: item.calculatedCii || null,
+      requiredCII: item.requiredCII || null,
+      cii: item.cii || null,
+    }));
 
     const actualPointsToUse = [...actualPoints];
 
@@ -373,42 +388,42 @@ const Voyage = () => {
       categories: ciiPerTrip.map((voyage) => `${voyage.category}`),
       datasets: [
         {
-          label: "CII attained / CII required ACTUAL(accumulated)",
+          label: 'CII attained / CII required ACTUAL(accumulated)',
           fill: true,
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           borderColor: newColor(0),
           pointRadius: 5,
           pointBackgroundColor: newColor(0),
           data: ciiLabelsAndIds.map(
             ({ id }) =>
               Math.round(actualPointsToUse.find((voyage) => voyage.id === id)
-              ?.calculatedCii / actualPointsToUse.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000
+                ?.calculatedCii / actualPointsToUse.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000,
           ),
         },
         {
-          label: "CII attained / CII required PREDICTED(accumulated)",
+          label: 'CII attained / CII required PREDICTED(accumulated)',
           fill: true,
-          backgroundColor: "transparent",
-          borderColor: "#C300CA",
+          backgroundColor: 'transparent',
+          borderColor: '#C300CA',
           pointRadius: 5,
-          pointBackgroundColor: "#C300CA",
+          pointBackgroundColor: '#C300CA',
           data: ciiLabelsAndIds.map(
             ({ id }) =>
               Math.round(predictedPoints.find((voyage) => voyage.id === id)
-              ?.calculatedCii / predictedPoints.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000 || null
+                ?.calculatedCii / predictedPoints.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000 || null,
           ),
         },
         {
-          label: "CII attained / CII required PREDICTED(voyage)",
+          label: 'CII attained / CII required PREDICTED(voyage)',
           fill: true,
-          backgroundColor: "transparent",
-          borderColor: "#ff748c",
+          backgroundColor: 'transparent',
+          borderColor: '#ff748c',
           pointRadius: 5,
-          pointBackgroundColor: "#ff748c",
+          pointBackgroundColor: '#ff748c',
           data: ciiLabelsAndIds.map(
             ({ id }) =>
               Math.round(predictedPoints.find((voyage) => voyage.id === id)
-              ?.cii / predictedPoints.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000 || null
+                ?.cii / predictedPoints.find((voyage) => voyage.id === id)?.requiredCII * 1000) / 1000 || null,
           ),
         },
         // getLine(
@@ -419,33 +434,33 @@ const Voyage = () => {
         //   true
         // ),
         getLine(
-          "A-bound",
-          "rgba(240,240,240,0.3)",
+          'A-bound',
+          'rgba(240,240,240,0.3)',
           2,
           ciiPerTrip.map((voyage) => parseFloat(voyage.aBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
         getLine(
-          "B-bound",
-          "rgba(240,240,240,0.3)",
+          'B-bound',
+          'rgba(240,240,240,0.3)',
           3,
           ciiPerTrip.map((voyage) => parseFloat(voyage.bBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
         getLine(
-          "C-bound",
-          "rgba(240,240,240,0.3)",
+          'C-bound',
+          'rgba(240,240,240,0.3)',
           4,
           ciiPerTrip.map((voyage) => parseFloat(voyage.cBound / voyage.requiredCII)?.toFixed(3) || null),
           true,
-          "#1145A5"
+          '#1145A5',
         ),
         getLine(
-          "D-bound",
-          "rgba(240,240,240,0.3)",
+          'D-bound',
+          'rgba(240,240,240,0.3)',
           5,
           ciiPerTrip.map((voyage) => parseFloat(voyage.dBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
       ],
     };
@@ -462,39 +477,39 @@ const Voyage = () => {
       categories: ciiPerTrip.map((voyage) => `${voyage.category}`),
       datasets: [
         getLine(
-          "CII attained / CII required",
-          "transparent",
+          'CII attained / CII required',
+          'transparent',
           0,
-          ciiPerTrip.map((voyage) => parseFloat(voyage.cii / voyage.requiredCII)?.toFixed(3) || null)
+          ciiPerTrip.map((voyage) => parseFloat(voyage.cii / voyage.requiredCII)?.toFixed(3) || null),
         ),
         getLine(
-          "A-bound",
-          "rgba(240,240,240,0.3)",
+          'A-bound',
+          'rgba(240,240,240,0.3)',
           2,
           ciiPerTrip.map((voyage) => parseFloat(voyage.aBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
         getLine(
-          "B-bound",
-          "rgba(240,240,240,0.3)",
+          'B-bound',
+          'rgba(240,240,240,0.3)',
           3,
           ciiPerTrip.map((voyage) => parseFloat(voyage.bBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
         getLine(
-          "C-bound",
-          "rgba(240,240,240,0.3)",
+          'C-bound',
+          'rgba(240,240,240,0.3)',
           4,
           ciiPerTrip.map((voyage) => parseFloat(voyage.cBound / voyage.requiredCII)?.toFixed(3) || null),
           true,
-          "#1145A5"
+          '#1145A5',
         ),
         getLine(
-          "D-bound",
-          "rgba(240,240,240,0.3)",
+          'D-bound',
+          'rgba(240,240,240,0.3)',
           5,
           ciiPerTrip.map((voyage) => parseFloat(voyage.dBound / voyage.requiredCII)?.toFixed(3) || null),
-          true
+          true,
         ),
       ],
     };
@@ -516,17 +531,17 @@ const Voyage = () => {
       labels: stackChartData.map((voyage) => voyage.voyageId),
       datasets: [
         {
-          type: "line",
-          label: "Distance travelled in NM",
+          type: 'line',
+          label: 'Distance travelled in NM',
           data: stackChartData.map((voyage) => parseFloat(voyage.distanceTraveled)?.toFixed(3)),
           fill: true,
-          backgroundColor: "transparent",
-          borderColor: "#777",
+          backgroundColor: 'transparent',
+          borderColor: '#777',
           borderDash: [4, 4],
           pointRadius: 5,
-          pointBackgroundColor: "#777",
-          pointBorderColor: "#777",
-          pointHoverBackgroundColor: "#777",
+          pointBackgroundColor: '#777',
+          pointBorderColor: '#777',
+          pointHoverBackgroundColor: '#777',
           yAxisID: 'y-axis-2',
         },
         ...fuels.map((fuel, index) => ({
@@ -550,24 +565,24 @@ const Voyage = () => {
         labels: labels.map((label) => label),
         datasets: [
           {
-            label: "Actual",
+            label: 'Actual',
             backgroundColor: newColor(0),
             data: labels.map(
               (key) =>
                 parseFloat(costChartPerVoyage.actual.find((voyage) => voyage.key === key)
-                  ?.euaCost)?.toFixed(3)
+                  ?.euaCost)?.toFixed(3),
             ),
             barPercentage: 1,
             categoryPercentage: 1,
           },
           {
-            label: "Predicted",
-            backgroundColor: "#C300CA",
+            label: 'Predicted',
+            backgroundColor: '#C300CA',
             data: labels.map(
               (key) =>
-              parseFloat(costChartPerVoyage.predicted.find(
-                  (voyage) => voyage.key === key
-                )?.euaCost)?.toFixed(3)
+                parseFloat(costChartPerVoyage.predicted.find(
+                  (voyage) => voyage.key === key,
+                )?.euaCost)?.toFixed(3),
             ),
             barPercentage: 1,
             categoryPercentage: 0.5,
@@ -588,9 +603,9 @@ const Voyage = () => {
         labels: labels.map((label) => label),
         datasets: [
           {
-            label: "Actual",
+            label: 'Actual',
             fill: true,
-            backgroundColor: "transparent",
+            backgroundColor: 'transparent',
             borderColor: newColor(0),
             pointRadius: 5,
             pointBackgroundColor: newColor(0),
@@ -598,25 +613,25 @@ const Voyage = () => {
               (
                 (sum) => (key) =>
                   parseFloat(sum += costChartPerVoyage.actual.find(
-                    (voyage) => voyage.key === key
+                    (voyage) => voyage.key === key,
                   )?.euaCost)?.toFixed(3)
-              )(0)
+              )(0),
             ),
           },
           {
-            label: "Predicted",
+            label: 'Predicted',
             fill: true,
-            backgroundColor: "transparent",
-            borderColor: "#C300CA",
+            backgroundColor: 'transparent',
+            borderColor: '#C300CA',
             pointRadius: 5,
-            pointBackgroundColor: "#C300CA",
+            pointBackgroundColor: '#C300CA',
             data: labels.map(
               (
                 (sum) => (key) =>
                   parseFloat(sum += costChartPerVoyage.predicted.find(
-                    (voyage) => voyage.key === key
+                    (voyage) => voyage.key === key,
                   )?.euaCost)?.toFixed(3)
-              )(0)
+              )(0),
             ),
           },
         ],
@@ -631,20 +646,20 @@ const Voyage = () => {
         labels: euaPercentChart.map((voyage) => voyage.key),
         datasets: [
           {
-            label: "EUA Cost as % of Bunker Cost",
+            label: 'EUA Cost as % of Bunker Cost',
             fill: true,
-            backgroundColor: "transparent",
-            borderColor: "#247aff",
-            pointBackgroundColor: "#247aff",
+            backgroundColor: 'transparent',
+            borderColor: '#247aff',
+            pointBackgroundColor: '#247aff',
             pointRadius: 5,
             data: euaPercentChart.map((voyage) => parseFloat(voyage.bcPercent)?.toFixed(3)),
           },
           {
-            label: "EUA Cost as % of Company's Fares",
+            label: 'EUA Cost as % of Company\'s Fares',
             fill: true,
-            backgroundColor: "transparent",
-            borderColor: "#C300CA",
-            pointBackgroundColor: "#C300CA",
+            backgroundColor: 'transparent',
+            borderColor: '#C300CA',
+            pointBackgroundColor: '#C300CA',
             pointRadius: 5,
             data: euaPercentChart.map((voyage) => parseFloat(voyage.fpPercent)?.toFixed(3)),
           },
@@ -685,7 +700,7 @@ const Voyage = () => {
           borderColor: newColor(index),
           data: fuelChartData.map((voyage) => parseFloat(voyage[fuel.toLowerCase()])?.toFixed(3)),
           yAxisID: 'y-axis-1',
-        }))
+        })),
       ],
     };
   }, [fuelChartData]);
@@ -695,37 +710,37 @@ const Voyage = () => {
       ...(selectedTab === JOURNEY_OPTION.CII ? CII_COLUMNS : []),
       ...(selectedTab === JOURNEY_OPTION.ETS ? ETS_COLUMNS : []),
       {
-        title: "Actions",
-        key: "actions",
+        title: 'Actions',
+        key: 'actions',
         render: (data) =>
           me?.userRole?.role === SUPER_ADMIN ||
-            me?.userRole?.role === COMPANY_EDITOR ? (
-              <>
-                <Button
-                  className={`${classes.action} view`}
-                  onClick={() => history.push(`/voyage/${data.id}`)}
-                >
-                  <EditIcon />
-                </Button>
-                <Button
-                  className={`${classes.action} delete`}
-                  onClick={() => handleDelete(data.id)}
-                >
-                  <DeleteIcon />
-                </Button>
-              </>
-            ) : (
+          me?.userRole?.role === COMPANY_EDITOR ? (
+            <>
               <Button
                 className={`${classes.action} view`}
                 onClick={() => history.push(`/voyage/${data.id}`)}
               >
-                <VisibilityIcon />
+                <EditIcon/>
               </Button>
-            ),
+              <Button
+                className={`${classes.action} delete`}
+                onClick={() => handleDelete(data.id)}
+              >
+                <DeleteIcon/>
+              </Button>
+            </>
+          ) : (
+            <Button
+              className={`${classes.action} view`}
+              onClick={() => history.push(`/voyage/${data.id}`)}
+            >
+              <VisibilityIcon/>
+            </Button>
+          ),
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedTab]
+    [selectedTab],
   );
 
   useEffect(() => {
@@ -740,7 +755,7 @@ const Voyage = () => {
     } else if (selectedTab === JOURNEY_OPTION.ETS) {
       getETSData(filterParams);
     }
-  }
+  };
 
   const deleteVoyage = useCallback(
     (isDelete) => {
@@ -750,15 +765,15 @@ const Voyage = () => {
       setDeletingVoyage(null);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [deletingVoyage, fetchVesselTripsList]
+    [deletingVoyage, fetchVesselTripsList],
   );
 
   const handleChangeSort = (value) => {
     if (value === sortBy) {
-      setOrder(order === "DESC" ? "ASC" : "DESC");
+      setOrder(order === 'DESC' ? 'ASC' : 'DESC');
     } else {
       setSortBy(value);
-      setOrder("ASC");
+      setOrder('ASC');
     }
   };
 
@@ -783,20 +798,20 @@ const Voyage = () => {
         download(
           res,
           `Vessel_Voyage_${Date.now()}.xlsx`,
-          "application/octet-stream"
+          'application/octet-stream',
         );
       });
     } else if (value === EXPORT_OPTION.PDF) {
-      const screenshot = await getScreenShot("cii-screenshot");
+      const screenshot = await getScreenShot('cii-screenshot');
       exportVoyageAsPdf(screenshot, filterParams).then((res) => {
-        download(res, `Vessel_Voyage_${Date.now()}.pdf`, "application/pdf");
+        download(res, `Vessel_Voyage_${Date.now()}.pdf`, 'application/pdf');
       });
     }
   };
 
   const handleChangeFiles = (files, parsedResult) => {
     setFiles(files);
-    setParsedData(parsedResult)
+    setParsedData(parsedResult);
   };
 
   const handleDownloadSample = () => {
@@ -808,7 +823,7 @@ const Voyage = () => {
   const handleSaveUpload = () => {
 
     if (Object.keys(parsedData).length === 0) {
-      return notify("Please upload a file!", "error");
+      return notify('Please upload a file!', 'error');
     }
 
     const data = parsedData.filter(item => item.voyageId);
@@ -817,36 +832,36 @@ const Voyage = () => {
 
     createVesselTrips(data)
       .then(() => {
-        notify("Created successfully!");
+        notify('Created successfully!');
         setFiles([]);
         setParsedData({});
         refetchData();
       })
       .catch((err) => {
         if (err?.response?.data) {
-          notify(err.response.data.message, "error");
+          notify(err.response.data.message, 'error');
         }
       })
       .finally(() => {
         setIsImporting(false);
       });
   };
-  
+
   const handleChangeYear = (e) => {
     setYear(e.target.value);
-  }
-  
+  };
+
   return (
     <Root className={classes.root}>
       <Box className={classes.title}>
         <Typography variant="title">Voyage</Typography>
       </Box>
 
-      <Box sx={{ marginBottom: "1rem" }}>
+      <Box sx={{ marginBottom: '1rem' }}>
         {Object.keys(JOURNEY_OPTION).map((option) => (
           <CommonButton
             key={option}
-            variant={option === selectedTab ? "contained" : "text"}
+            variant={option === selectedTab ? 'contained' : 'text'}
             className={classes.toggle}
             onClick={() => setSelectedTab(option)}
           >
@@ -856,7 +871,7 @@ const Voyage = () => {
       </Box>
 
       <Box className={classes.filterWrapper}>
-      {me?.userRole?.role === SUPER_ADMIN && (
+        {me?.userRole?.role === SUPER_ADMIN && (
           <CommonSelect
             className={classes.filter}
             options={companyFilters}
@@ -879,10 +894,10 @@ const Voyage = () => {
         <CommonSelect
           className={classes.filter}
           options={[
-            { name: "Select Type", value: "VISIABLE" },
-            { name: "Actual", value: "ACTUAL" },
-            { name: "Predicted", value: "PREDICTED" },
-            { name: "Archived", value: "ARCHIVED" },
+            { name: 'Select Type', value: 'VISIABLE' },
+            { name: 'Actual', value: 'ACTUAL' },
+            { name: 'Predicted', value: 'PREDICTED' },
+            { name: 'Archived', value: 'ARCHIVED' },
           ]}
           optionLabel="name"
           optionValue="value"
@@ -908,7 +923,7 @@ const Voyage = () => {
         />
         <CommonSelect
           className={classes.filter}
-          options={[{ id: 'no_year', label: 'Select Year' }, ...YEARS_OPTION ]}
+          options={[{ id: 'no_year', label: 'Select Year' }, ...YEARS_OPTION]}
           optionLabel="label"
           optionValue="id"
           value={year}
@@ -923,7 +938,7 @@ const Voyage = () => {
         {[SUPER_ADMIN, COMPANY_EDITOR].includes(me?.userRole?.role) && (
           <CommonButton
             className={classes.button}
-            onClick={() => history.push("/voyage/create")}
+            onClick={() => history.push('/voyage/create')}
           >
             Create voyage
           </CommonButton>
@@ -975,7 +990,8 @@ const Voyage = () => {
               me?.userRole?.role !== VIEWER &&
               <Grid item xs={12} md={12}>
                 <Card className={classes.card}>
-                  <Dropzone files={files} onExcelParse={(file) => excelVoyageParse(file)} onChangeFiles={handleChangeFiles} />
+                  <Dropzone files={files} onExcelParse={(file) => excelVoyageParse(file)}
+                            onChangeFiles={handleChangeFiles}/>
                   <Box className={classes.fileAction}>
                     <CommonButton
                       color="secondary"
@@ -1002,7 +1018,7 @@ const Voyage = () => {
                 scales={{
                   x: {
                     time: {
-                      unit: "month",
+                      unit: 'month',
                     },
                     gridLines: {
                       display: false,
@@ -1014,8 +1030,8 @@ const Voyage = () => {
                     stacked: true,
                     scaleLabel: {
                       display: true,
-                      labelString: "Voyage ID"
-                    }
+                      labelString: 'Voyage ID',
+                    },
                   },
                   y: {
                     ticks: {
