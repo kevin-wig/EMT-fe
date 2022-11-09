@@ -475,14 +475,14 @@ const CompanyDetail = ({ match }) => {
                         </Typography>
                       </div>
                     )}
-                    {company?.vesselOnboardingLinks.length !== 0 && (
+                    {company?.vesselOnboardingLinks?.length !== 0 && (
                       <Typography
                         variant='h6'
                         component='div'
                         style={{ marginTop: '1rem' }}
                       >
                         <i>
-                          {company?.vesselOnboardingLinks.length} Vessel(s)
+                          {company?.vesselOnboardingLinks?.length || 0} Vessel(s)
                           linked for this company
                         </i>
                       </Typography>
