@@ -198,7 +198,6 @@ const ComparisonBox = ({
         if (options.vesselType) {
           found = CII_IMO_VALUES.filter((el) => +el.id === +options.vesselType);
           const dwtRanges = found[0].values.map((el) => {
-            console.log(el.dwt);
             return ({ range: el.dwt.split(/[+|-]/g).map(value => value ? +value : undefined), imoValue: el.imoValue })
           });
           data.chartData?.forEach((item) => {
@@ -275,8 +274,9 @@ const ComparisonBox = ({
   );
 
   useEffect(() => {
-    setVesselList(vessels);
-  }, [vessels]);
+    const selectedCompanies = formik.getFieldProps('companyIds').value;
+    setVesselList(vessels.filter((vessel) => selectedCompanies?.includes(vessel.companyId)));
+  }, [vessels, formik.getFieldProps('companyIds').value]);
 
   useEffect(() => {
     setFleetList(fleets);
@@ -339,7 +339,6 @@ const ComparisonBox = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter, vessels]);
 
-  console.log(chartData);
   const generateChartData = (chartData, reportType) => {
     if (reportType === REPORT_TYPE_ENUM.CII) {
       const ciiLabels = selectedVessel ? selectedVessel.data.map((dt) => dt.name || dt.key) : chartData.map((data) => data.name);
