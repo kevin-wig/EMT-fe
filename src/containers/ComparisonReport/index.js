@@ -103,10 +103,10 @@ const ComparisonReport = () => {
     // TODO: need to confirm for right user logic
     getCompanies();
     if (me?.userRole?.role === SUPER_ADMIN) {
-      getFleets();
       // getCompanies();
-      getVessels();
     }
+    getFleets();
+    getVessels();
     getVesselTypes();
     getFuels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
