@@ -275,7 +275,7 @@ const ComparisonBox = ({
 
   useEffect(() => {
     const selectedCompanies = formik.getFieldProps('companyIds').value;
-    setVesselList(vessels.filter((vessel) => selectedCompanies?.includes(vessel.companyId)));
+    setVesselList(vessels.filter((vessel) => Array.isArray(selectedCompanies) ? selectedCompanies?.includes(vessel.companyId) : selectedCompanies === vessel.companyId));
   }, [vessels, formik.getFieldProps('companyIds').value]);
 
   useEffect(() => {
@@ -309,7 +309,7 @@ const ComparisonBox = ({
   useEffect(() => {
     const state = formik.values;
     const selectedVesselsList = vessels
-      .filter((vessel) => !state.companyIds || !state.companyIds.length || state.companyIds.includes(vessel.companyId))
+      .filter((vessel) => !state.companyIds || (Array.isArray(state.companyIds) ? (!state.companyIds.length || state.companyIds.includes(vessel.companyId)) : state.companyIds === vessel.companyId))
       .filter((vessel) => !state.fleets || !state.fleets.length || state.fleets.includes(vessel?.fleet?.id))
       .filter((vessel) => !state.vesselType || vessel.vesselTypeId === +state.vesselType)
       .filter((vessel, index) => {
@@ -647,7 +647,7 @@ const ComparisonBox = ({
                     options={[...companies, {
                       id: 'imo_average',
                       name: 'IMO average',
-                    }, me?.userRole?.role !== SUPER_ADMIN && { id: 'other_companies', name: 'Other companies' }]}
+                    }, me?.userRole?.role !== SUPER_ADMIN && { id: me.company.id, name: me.company.name }]}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
