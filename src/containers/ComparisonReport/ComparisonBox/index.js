@@ -644,10 +644,14 @@ const ComparisonBox = ({
                   <Typography component="p">Company</Typography>
                   <CommonSelect
                     className={classes.input}
-                    options={[...companies, {
-                      id: 'imo_average',
-                      name: 'IMO average',
-                    }, me?.userRole?.role !== SUPER_ADMIN && { id: me.company.id, name: me.company.name }]}
+                    options={[
+                      ...companies,
+                      {
+                        id: 'imo_average',
+                        name: 'IMO average',
+                      },
+                      ...(me?.userRole?.role !== SUPER_ADMIN ? [{ id: me.company.id, name: me.company.name }, { id: 'other_companies', name: 'Other companies' }] : [])
+                    ]}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
