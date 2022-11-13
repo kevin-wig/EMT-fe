@@ -191,7 +191,11 @@ const ComparisonBox = ({
       const options = getParameters(payload);
       onUpdateOption(options);
 
-      getReport({ ...options, year }).then((res) => {
+      getReport({
+        ...options,
+        ...(options.vesselIds.length ? {} : { vesselIds: undefined }),
+        year
+      }).then((res) => {
         const data = res.data;
 
         let found;
@@ -237,7 +241,14 @@ const ComparisonBox = ({
         setComparisonData(data);
         addReportedOptions(id, options);
       });
-      getReport({ ...options, year }, year, true).then((res) => {
+      getReport({
+          ...options,
+          ...(options.vesselIds.length ? {} : { vesselIds: undefined }),
+          year
+        },
+        year,
+        true
+      ).then((res) => {
         const data = res.data;
         setComparisonVoyageData(data);
       });
