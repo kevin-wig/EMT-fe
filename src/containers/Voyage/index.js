@@ -189,13 +189,9 @@ const Voyage = () => {
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
   const [year, setYear] = useState('no_year');
+  const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
-      order,
-      sortBy,
-      page,
-      limit,
-      search,
       voyageType: voyageType === 'VISIABLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
       journeyType: selectedTab,
       ...(+vesselId !== -1 && { vesselId }),
@@ -203,20 +199,7 @@ const Voyage = () => {
       fromDate: year === 'no_year' ? fromDate?.toISOString() : moment(year, 'year').startOf('year').toISOString(),
       toDate: year === 'no_year' ? toDate?.toISOString() : moment(year, 'year').endOf('year').toISOString(),
     }),
-    [
-      order,
-      sortBy,
-      page,
-      limit,
-      search,
-      voyageType,
-      selectedTab,
-      vesselId,
-      companyId,
-      fromDate,
-      toDate,
-      year,
-    ],
+    [voyageType, selectedTab, vesselId, companyId, fromDate, toDate, year],
   );
 
   const getCIIData = useCallback(
@@ -289,7 +272,7 @@ const Voyage = () => {
   }, [vessels]);
 
   const fetchVesselTripsList = useCallback(() => {
-    getTrips(filterParams)
+    getTrips({ ...filterParams, ...paginationParams })
       .then((res) => {
         const data = res.data;
         setTrips(data.listData);
@@ -302,7 +285,7 @@ const Voyage = () => {
       });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterParams]);
+  }, [filterParams, paginationParams]);
 
   useEffect(() => {
     if (me?.userRole?.role === SUPER_ADMIN) {
