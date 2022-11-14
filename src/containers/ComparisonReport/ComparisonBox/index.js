@@ -191,7 +191,11 @@ const ComparisonBox = ({
       const options = getParameters(payload);
       onUpdateOption(options);
 
-      getReport({ ...options, year }).then((res) => {
+      getReport({
+        ...options,
+        ...(options.vesselIds.length ? {} : { vesselIds: undefined }),
+        year
+      }).then((res) => {
         const data = res.data;
 
         let found;
@@ -237,12 +241,21 @@ const ComparisonBox = ({
         setComparisonData(data);
         addReportedOptions(id, options);
       });
-      getReport({ ...options, year }, year, true).then((res) => {
+      getReport({
+          ...options,
+          ...(options.vesselIds.length ? {} : { vesselIds: undefined }),
+          year
+        },
+        year,
+        true
+      ).then((res) => {
         const data = res.data;
         setComparisonVoyageData(data);
       });
     },
   });
+
+  const companyIds = formik.getFieldProps('companyIds').value;
 
   useEffect(() => {
     // formik.setFieldValue(
@@ -595,6 +608,7 @@ const ComparisonBox = ({
 
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
+    console.log(selectedValues);
     if ((admin && selectedValues.indexOf('imo_average') > -1) || selectedValues === 'imo_average') {
       setIMOAverageMode(true);
       formik.setFieldValue('reportType', 'cii');
@@ -644,10 +658,14 @@ const ComparisonBox = ({
                   <Typography component="p">Company</Typography>
                   <CommonSelect
                     className={classes.input}
-                    options={[...companies, {
-                      id: 'imo_average',
-                      name: 'IMO average',
-                    }, me?.userRole?.role !== SUPER_ADMIN && { id: me.company.id, name: me.company.name }]}
+                    options={[
+                      ...companies,
+                      {
+                        id: 'imo_average',
+                        name: 'IMO average',
+                      },
+                      ...(me?.userRole?.role !== SUPER_ADMIN ? [{ id: me.company.id, name: me.company.name }, { id: 'other_companies', name: 'Other companies' }] : [])
+                    ]}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
@@ -742,7 +760,7 @@ const ComparisonBox = ({
                     optionLabel="name"
                     optionValue="id"
                     {...formik.getFieldProps('vesselIds')}
-                    disabled={imoAverageMode}
+                    disabled={imoAverageMode || companyIds === 'other_companies'}
                     onChange={handleOnVesselChange}
                   />
                 </Box>
@@ -777,10 +795,10 @@ const ComparisonBox = ({
             <Grid item xs={12}>
               <Card className={classes.card}>
                 <Typography variant="subtitle1" className={classes.kpiTitle}>
-                  Total Emission ({comparisonData.year})
+                  {companyIds === 'other_companies' ? `Average emissions per vessel (${comparisonData.year})` : `Total Emission (${comparisonData.year})`}
                 </Typography>
                 <Typography variant="subtitle2">
-                  {parseFloat(comparisonData.totalEmissions)?.toFixed(3) || 0}
+                  {parseFloat(comparisonData.totalEmissions / (companyIds === 'other_companies' ? comparisonData.chartData.length : 1))?.toFixed(3) || 0}
                 </Typography>
               </Card>
             </Grid>
