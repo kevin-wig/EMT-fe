@@ -255,6 +255,8 @@ const ComparisonBox = ({
     },
   });
 
+  const companyIds = formik.getFieldProps('companyIds').value;
+
   useEffect(() => {
     // formik.setFieldValue(
     //   "companyIds",
@@ -606,6 +608,7 @@ const ComparisonBox = ({
 
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
+    console.log(selectedValues);
     if ((admin && selectedValues.indexOf('imo_average') > -1) || selectedValues === 'imo_average') {
       setIMOAverageMode(true);
       formik.setFieldValue('reportType', 'cii');
@@ -757,7 +760,7 @@ const ComparisonBox = ({
                     optionLabel="name"
                     optionValue="id"
                     {...formik.getFieldProps('vesselIds')}
-                    disabled={imoAverageMode}
+                    disabled={imoAverageMode || companyIds === 'other_companies'}
                     onChange={handleOnVesselChange}
                   />
                 </Box>
@@ -792,10 +795,10 @@ const ComparisonBox = ({
             <Grid item xs={12}>
               <Card className={classes.card}>
                 <Typography variant="subtitle1" className={classes.kpiTitle}>
-                  Total Emission ({comparisonData.year})
+                  {companyIds === 'other_companies' ? 'Average emissions per vessel' : 'Total Emission ({comparisonData.year})'}
                 </Typography>
                 <Typography variant="subtitle2">
-                  {parseFloat(comparisonData.totalEmissions)?.toFixed(3) || 0}
+                  {parseFloat(comparisonData.totalEmissions / (companyIds === 'other_companies' ? comparisonData.chartData.length : 1))?.toFixed(3) || 0}
                 </Typography>
               </Card>
             </Grid>
