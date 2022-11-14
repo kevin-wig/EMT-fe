@@ -795,7 +795,7 @@ const ComparisonBox = ({
             <Grid item xs={12}>
               <Card className={classes.card}>
                 <Typography variant="subtitle1" className={classes.kpiTitle}>
-                  {companyIds === 'other_companies' ? 'Average emissions per vessel' : 'Total Emission ({comparisonData.year})'}
+                  {companyIds === 'other_companies' ? `Average emissions per vessel (${comparisonData.year})` : `Total Emission (${comparisonData.year})`}
                 </Typography>
                 <Typography variant="subtitle2">
                   {parseFloat(comparisonData.totalEmissions / (companyIds === 'other_companies' ? comparisonData.chartData.length : 1))?.toFixed(3) || 0}
