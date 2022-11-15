@@ -176,16 +176,16 @@ function CompanyProvider(props) {
       .catch(handleError);
   }, []);
 
-  const getVesselsCIIChart = useCallback(async (id, year, type) => {
+  const getVesselsCIIChart = useCallback(async (id, year, month, type, isVoyage) => {
     setLoading(true);
-    return CompanyService.getVesselsCIICharts(id, year, type)
+    return CompanyService.getVesselsCIICharts(id, year, month, type, isVoyage)
       .then(handleSuccess)
       .catch(handleError);
   }, []);
 
-  const getVesselsEmissionChart = useCallback(async (id, year, type) => {
+  const getVesselsEmissionChart = useCallback(async (id, year, month, type, isVoyage) => {
     setLoading(true);
-    return CompanyService.getVesselsEmissionCharts(id, year, type)
+    return CompanyService.getVesselsEmissionCharts(id, year, month, type, isVoyage)
       .then(handleSuccess)
       .catch(handleError);
   }, []);

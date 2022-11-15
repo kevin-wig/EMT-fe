@@ -86,6 +86,7 @@ const BarChart = ({
   scales,
 }) => {
   const chartOptions = {
+    onClick,
     maintainAspectRatio: false,
     legend: {
       display: true,
@@ -150,8 +151,8 @@ const BarChart = ({
       <Box className={classes.cardHeader}>
         <Typography>{title}</Typography>
       </Box>
-      <Box className={classes.cardBody} onDoubleClick={onDblClick}>
-        <Bar data={data} options={chartOptions} onElementsClick={onClick}  />
+      <Box className={classes.cardBody}>
+        <Bar data={data} options={chartOptions} onDoubleClick={onDblClick} />
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>

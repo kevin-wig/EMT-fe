@@ -49,8 +49,8 @@ const DashboardCII = ({ company, thisYear, type }) => {
     totalCount: 0,
     totalPages: 0,
   });
-  const [ciiChartYear, setCiiChartYear] = useState(thisYear);
-  const [categoryChartYear, setCategoryChartYear] = useState(thisYear);
+  const [ciiChartMonth, setCiiChartMonth] = useState();
+  const [categoryChartMonth, setCategoryChartMonth] = useState();
   const [totalDistanceTraveled, setTotalDistanceTraveled] = useState(0);
 
   useEffect(() => {
@@ -65,12 +65,12 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
   useEffect(() => {
     if (company) {
-      getVesselsCIIChart(company, thisYear, type)
+      getVesselsCIIChart(company, thisYear, ciiChartMonth, type)
         .then((res) => {
           setVesselsChart(res.data);
         });
 
-      getVesselsEmissionChart(company, thisYear, type)
+      getVesselsEmissionChart(company, thisYear, categoryChartMonth, type)
         .then((res) => {
           setVesselsEmissionChart(res.data);
         });
@@ -80,7 +80,7 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
   useEffect(() => {
     if (company) {
-      getVesselsCIIKpi(company, thisYear, type)
+      getVesselsCIIKpi(company, thisYear, undefined, type)
         .then((res) => {
           setKpi(res.data);
         });
@@ -90,23 +90,23 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
   useEffect(() => {
     if (company) {
-      getVesselsCIIChart(company, ciiChartYear, type)
+      getVesselsCIIChart(company, thisYear, ciiChartMonth, type)
         .then((res) => {
           setVesselsChart(res.data);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [company, ciiChartYear, type]);
+  }, [company, thisYear, ciiChartMonth, type]);
 
   useEffect(() => {
     if (company) {
-      getVesselsEmissionChart(company, categoryChartYear, type)
+      getVesselsEmissionChart(company, thisYear, categoryChartMonth, type)
         .then((res) => {
           setVesselsEmissionChart(res.data);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [company, categoryChartYear, type]);
+  }, [company, thisYear, categoryChartMonth, type]);
 
   useEffect(() => {
     if (company) {
@@ -127,14 +127,14 @@ const DashboardCII = ({ company, thisYear, type }) => {
   }, [company, page, limit, type, sortBy, order, search, thisYear]);
 
   const ciiOverTimeLabels = useMemo(() => {
-    const years = genYearArray(vesselsChart?.chart.reduce((acc, dt) => [
+    const years = vesselsChart?.chart.reduce((acc, dt) => [
       ...acc,
-      ...(dt?.data?.map((datum) => thisYear) || []),
-    ], [thisYear]));
+      ...(dt?.data?.map((datum) => datum.key) || []),
+    ], []);
 
     return {
-      labels: ciiChartYear ? MONTHS : years,
-      keys: ciiChartYear ? Object.keys(MONTHS).map((index) => +index + 1) : years,
+      labels: ciiChartMonth ? years : MONTHS,
+      keys: ciiChartMonth ? years:  Object.keys(MONTHS).map((index) => +index + 1),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vesselsChart]);
@@ -159,14 +159,14 @@ const DashboardCII = ({ company, thisYear, type }) => {
   }, [ciiOverTimeLabels, type]);
 
   const categoryLabels = useMemo(() => {
-    const years = genYearArray(vesselsEmissionChart?.reduce((acc, dt) => [
+    const years = vesselsEmissionChart?.reduce((acc, dt) => [
       ...acc,
-      ...(dt?.data?.map((datum) => thisYear) || []),
-    ], [thisYear]));
+      ...(dt?.data?.map((datum) => datum.key) || []),
+    ], []);
 
     return {
-      labels: categoryChartYear ? MONTHS : years,
-      keys: categoryChartYear ? Object.keys(MONTHS).map((index) => +index + 1) : years,
+      labels: categoryChartMonth ? years : MONTHS,
+      keys: categoryChartMonth ? years : Object.keys(MONTHS).map((index) => +index + 1),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vesselsEmissionChart, type]);
@@ -254,38 +254,36 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
   const handleDblClickCiiChart = (event) => {
     event.preventDefault();
-    if (ciiChartYear) {
-      setCiiChartYear(undefined);
+    if (ciiChartMonth) {
+      setCiiChartMonth(undefined);
     } else {
     }
   };
 
-  const handleClickCiiChart = (elements) => {
+  const handleClickCiiChart = (instance, elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
-      if (!ciiChartYear) {
-        setCiiChartYear(ciiOverTimeLabels.keys[elements[0]._index]);
+      if (!ciiChartMonth) {
+        setCiiChartMonth(ciiOverTimeLabels.keys[elements[0].index]);
       }
     }
   };
 
   const handleDblClickCategoryChart = (event) => {
     event.preventDefault();
-    if (categoryChartYear) {
-      setCategoryChartYear(undefined);
+    if (categoryChartMonth) {
+      setCategoryChartMonth(undefined);
     } else {
     }
   };
 
-  const handleClickCategoryChart = (elements) => {
+  const handleClickCategoryChart = (instance, elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
-      if (!categoryChartYear) {
-        setCategoryChartYear(categoryLabels.keys[elements[0]._index]);
+      if (!categoryChartMonth) {
+        setCategoryChartMonth(categoryLabels.keys[elements[0].index]);
       }
     }
   };
 
-  console.log(certificate);
-  console.log(vesselsEmissionChart);
   return (
     <>
       <Grid container spacing={3} sx={{ marginBottom: '1.5rem' }} id="converting-pdf">

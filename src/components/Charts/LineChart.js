@@ -85,6 +85,7 @@ const LineChart = ({
   onDblClick = () => null,
 }) => {
   const options = {
+    onClick,
     maintainAspectRatio: false,
     legend: {
       display: true,
@@ -153,8 +154,8 @@ const LineChart = ({
       <Box className={classes.cardHeader}>
         <Typography>{title}</Typography>
       </Box>
-      <Box className={classes.cardBody} onDoubleClick={onDblClick}>
-        <Chart data={data} options={options} onElementsClick={onClick} type="line" />
+      <Box className={classes.cardBody}>
+        <Chart data={data} options={options} onDoubleClick={onDblClick} type="line" />
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>
