@@ -143,6 +143,16 @@ const UserDetail = ({ match }) => {
     },
   });
 
+  const selectedRoleId = formik.getFieldProps('userRole').value;
+  const selectedRole = useMemo(() => {
+    return roles.find((role) => role.id === selectedRoleId)?.role;
+  }, [selectedRoleId]);
+
+  useEffect(() => {
+    if (selectedRole === SUPER_ADMIN) {
+      formik.setFieldValue('companyId', '');
+    }
+  }, [selectedRole]);
   useEffect(() => {
     if (isEditEnable) {
       const isCreate = isNaN(match?.params?.id);
@@ -258,17 +268,19 @@ const UserDetail = ({ match }) => {
                     </Box>
                   )}
                 </Box>
-                <Box className={classes.wrapper}>
-                  <Typography component="p">Company</Typography>
-                  <CommonSelect
-                    className={classes.input}
-                    options={isEditEnable ? (companies?.length > 0 ? companies : tempCompanyOption) : tempCompanyOption}
-                    optionLabel="name"
-                    optionValue="id"
-                    {...formik.getFieldProps('companyId')}
-                    disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN}
-                  />
-                </Box>
+                {selectedRole !== SUPER_ADMIN && (
+                  <Box className={classes.wrapper}>
+                    <Typography component="p">Company</Typography>
+                    <CommonSelect
+                      className={classes.input}
+                      options={isEditEnable ? (companies?.length > 0 ? companies : tempCompanyOption) : tempCompanyOption}
+                      optionLabel="name"
+                      optionValue="id"
+                      {...formik.getFieldProps('companyId')}
+                      disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN}
+                    />
+                  </Box>
+                )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Role</Typography>
                   <CommonSelect
