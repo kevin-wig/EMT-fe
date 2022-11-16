@@ -260,10 +260,10 @@ const DashboardCII = ({ company, thisYear, type }) => {
     }
   };
 
-  const handleClickCiiChart = (elements) => {
+  const handleClickCiiChart = (instance, elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
       if (!ciiChartYear) {
-        setCiiChartYear(ciiOverTimeLabels.keys[elements[0]._index]);
+        setCiiChartYear(ciiOverTimeLabels.keys[elements[0].index]);
       }
     }
   };
@@ -276,7 +276,7 @@ const DashboardCII = ({ company, thisYear, type }) => {
     }
   };
 
-  const handleClickCategoryChart = (elements) => {
+  const handleClickCategoryChart = (instance, elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
       if (!categoryChartYear) {
         setCategoryChartYear(categoryLabels.keys[elements[0]._index]);
