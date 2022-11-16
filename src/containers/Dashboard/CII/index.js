@@ -279,7 +279,7 @@ const DashboardCII = ({ company, thisYear, type }) => {
   const handleClickCategoryChart = (instance, elements) => {
     if (Array.isArray(elements) && elements.length > 0) {
       if (!categoryChartYear) {
-        setCategoryChartYear(categoryLabels.keys[elements[0]._index]);
+        setCategoryChartYear(categoryLabels.keys[elements[0].index]);
       }
     }
   };
