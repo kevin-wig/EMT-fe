@@ -77,16 +77,16 @@ export async function getVesselsEtsKPI(id, year) {
     .catch((err) => Promise.reject(err));
 }
 
-export async function getVesselsCIICharts(id, year, month, type, isVoyage) {
+export async function getVesselsCIICharts(id, year, type) {
   return apiClient
-    .get(`companies/vessels/charts/emissions/${id}`, { params: { year, month, type, isVoyage } })
+    .get(`companies/vessels/charts/emissions/${id}`, { params: { year, type } })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }
 
-export async function getVesselsEmissionCharts(id, year, month, type, isVoyage) {
+export async function getVesselsEmissionCharts(id, year, type) {
   return apiClient
-    .get(`companies/vessels/charts/category/${id}`, { params: { year, month, type, isVoyage } })
+    .get(`companies/vessels/charts/category/${id}`, { params: { year, type } })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }
