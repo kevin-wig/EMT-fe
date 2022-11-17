@@ -290,7 +290,9 @@ const Voyage = () => {
   useEffect(() => {
     if (me?.userRole?.role === SUPER_ADMIN) {
       getCompanies().then(() => {
-        setCompanyId(filterCompany);
+        if (filterCompany) {
+          setCompanyId(filterCompany);
+        }
       });
     } else {
       setCompanyId(me?.companyId);
