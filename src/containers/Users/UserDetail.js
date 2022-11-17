@@ -183,7 +183,7 @@ const UserDetail = ({ match }) => {
       goBack();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isEditEnable, isProfilePage, match?.params?.id]);
 
   useEffect(() => {
     if (isProfilePage) {
