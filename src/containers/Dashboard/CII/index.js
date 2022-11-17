@@ -49,8 +49,8 @@ const DashboardCII = ({ company, thisYear, type }) => {
     totalCount: 0,
     totalPages: 0,
   });
-  const [ciiChartYear, setCiiChartYear] = useState(thisYear);
-  const [categoryChartYear, setCategoryChartYear] = useState(thisYear);
+  const [ciiChartYear, setCiiChartYear] = useState();
+  const [categoryChartYear, setCategoryChartYear] = useState();
   const [totalDistanceTraveled, setTotalDistanceTraveled] = useState(0);
 
   useEffect(() => {
@@ -65,18 +65,18 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
   useEffect(() => {
     if (company) {
-      getVesselsCIIChart(company, thisYear, type)
+      getVesselsCIIChart(company, undefined, type)
         .then((res) => {
           setVesselsChart(res.data);
         });
 
-      getVesselsEmissionChart(company, thisYear, type)
+      getVesselsEmissionChart(company, undefined, type)
         .then((res) => {
           setVesselsEmissionChart(res.data);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [company, type, thisYear]);
+  }, [company, type]);
 
   useEffect(() => {
     if (company) {
@@ -129,8 +129,9 @@ const DashboardCII = ({ company, thisYear, type }) => {
   const ciiOverTimeLabels = useMemo(() => {
     const years = genYearArray(vesselsChart?.chart.reduce((acc, dt) => [
       ...acc,
-      ...(dt?.data?.map((datum) => thisYear) || []),
-    ], [thisYear]));
+      ...(dt?.data?.map((datum) => datum.key) || []),
+    ], [2026]));
+    console.log(years);
 
     return {
       labels: ciiChartYear ? MONTHS : years,
@@ -161,8 +162,9 @@ const DashboardCII = ({ company, thisYear, type }) => {
   const categoryLabels = useMemo(() => {
     const years = genYearArray(vesselsEmissionChart?.reduce((acc, dt) => [
       ...acc,
-      ...(dt?.data?.map((datum) => thisYear) || []),
-    ], [thisYear]));
+      ...(dt?.data?.map((datum) => datum.key) || []),
+    ], [2026]));
+    console.log(years);
 
     return {
       labels: categoryChartYear ? MONTHS : years,

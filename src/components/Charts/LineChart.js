@@ -123,7 +123,7 @@ const LineChart = ({
     },
     scales: {
       x: {
-        reverse: true,
+        reverse: false,
         gridLines: {
           color: '#e2e2e2',
         },
