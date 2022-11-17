@@ -145,7 +145,7 @@ const UserDetail = ({ match }) => {
 
   const selectedRoleId = formik.getFieldProps('userRole').value;
   const selectedRole = useMemo(() => {
-    return roles.find((role) => role.id === selectedRoleId)?.role;
+    return roles?.find((role) => role.id === selectedRoleId)?.role;
   }, [selectedRoleId]);
 
   useEffect(() => {
