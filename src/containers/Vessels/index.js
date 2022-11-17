@@ -56,10 +56,16 @@ const Root = styled('div')(() => ({
 
 const Vessel = () => {
   const { me } = useAuth();
+  const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
   const { pagination, vesselLists, getVesselsList, createVessels, fuels, getFuels } = useVessel();
   const { fleets, getFleets } = useFleet();
   const { notify } = useSnackbar();
-  const { filterCompany } = useCompany();
+  const {
+    companies,
+    getCompanies,
+    filterCompany,
+    setFilterCompany,
+  } = useCompany();
 
   const history = useHistory();
 
@@ -72,6 +78,7 @@ const Vessel = () => {
   const [sortBy, setSortBy] = useState();
   const [order, setOrder] = useState('ASC');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [company, setCompany] = useState();
 
   useEffect(() => {
     if (getVesselsList && getFleets && getFuels) {
@@ -82,8 +89,25 @@ const Vessel = () => {
       getVesselsList({ year: selectedYear, page, limit, companyId: filterCompany });
       getFuels();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setFilterCompany(company);
+  }, [company]);
+
+  useEffect(() => {
+    if (companies && isSuperAdmin) {
+      setCompany(filterCompany || companies[0]?.id);
+    } else if (me?.company?.id) {
+      setCompany(me?.company?.id);
+    }
+  }, [isSuperAdmin, me?.company?.id, companies]);
+
+  useEffect(() => {
+    if (isSuperAdmin) {
+      getCompanies();
+    }
+  }, [isSuperAdmin]);
 
   useEffect(() => {
     if (getVesselsList) {
@@ -187,11 +211,24 @@ const Vessel = () => {
     });
   };
 
+  const handleSelectCompany = (value) => {
+    setCompany(value);
+  };
+
   return (
     <Root className={classes.root}>
       <Box className={classes.title}>
         <Typography variant="title">Vessels</Typography>
         <Box>
+          {isSuperAdmin && (
+            <CommonMenu
+              className={classes.menu}
+              items={companies}
+              optionLabel="name"
+              onChange={handleSelectCompany}
+              label={companies?.find((item) => item.id === company)?.name}
+            />
+          )}
           <CommonMenu
             className={classes.menu}
             label={`Year - ${selectedYear}`}
