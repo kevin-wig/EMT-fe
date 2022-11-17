@@ -713,7 +713,7 @@ const ComparisonBox = ({
                     optionLabel="name"
                     optionValue="id"
                     {...formik.getFieldProps('fleets')}
-                    disabled={imoAverageMode}
+                    disabled={imoAverageMode || companyIds === 'other_companies'}
                     onChange={(e) => {
                       handleChangeFleets(e);
                       formik.getFieldProps('fleets').onChange(e);
