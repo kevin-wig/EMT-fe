@@ -311,13 +311,13 @@ const ComparisonBox = ({
   useEffect(() => {
     const reportType = reportOption?.reportType;
     if (reportType === REPORT_TYPE_ENUM.CII) {
-      setChartTitle('CII Over time');
+      setChartTitle(companyIds === 'other_companies' ? 'Average CII Attained/Required' : 'CII Over time');
     } else if (reportType === REPORT_TYPE_ENUM.ETS) {
       setChartTitle('ETS per vessel');
     } else if (reportType === REPORT_TYPE_ENUM.GHG) {
       setChartTitle('GHGs per vessel');
     }
-  }, [reportOption?.reportType]);
+  }, [reportOption?.reportType, companyIds]);
 
   useEffect(() => {
     const state = formik.values;
@@ -354,47 +354,76 @@ const ComparisonBox = ({
 
   const generateChartData = (chartData, reportType) => {
     if (reportType === REPORT_TYPE_ENUM.CII) {
-      const ciiLabels = selectedVessel ? selectedVessel.data.map((dt) => dt.name || dt.key) : chartData.map((data) => data.name);
-      const datasets = selectedVessel
-        ?
-        [
-          {
-            backgroundColor: selectedVessel.data.map((_, index) => newColor(index)),
-            data: selectedVessel.data.map((dt) => parseFloat(dt.cii)?.toFixed(3) || 0),
-            barPercentage: 0.7,
-            categoryPercentage: 1,
-            fill: true,
-          }
-        ]
-        :
-        [
-          {
-            type: 'line',
-            label: 'IMO Average',
-            borderColor: 'rgb(255, 255, 255)',
-            borderWidth: 3,
-            pointRadius: 10,
-            pointHoverRadius: 11,
-            showLine: false,
-            fill: false,
-            backgroundColor: chartData.map((_, index) => newColor(index)),
-            data: chartData.map((dt) => parseFloat(dt.data[0].imoValue)?.toFixed(3) || 0),
-            categoryPercentage: 1,
-          },
-          {
-            type: 'bar',
-            label: 'CII',
-            backgroundColor: chartData.map((_, index) => newColor(index)),
-            data: chartData.map((dt) => parseFloat(dt.data[0].cii)?.toFixed(3) || 0),
-            barPercentage: 0.7,
-            fill: true,
-          },
-        ];
+      if (companyIds !== 'other_companies') {
+        const ciiLabels = selectedVessel ? selectedVessel.data.map((dt) => dt.name || dt.key) : chartData.map((data) => data.name);
+        const datasets = selectedVessel
+          ?
+          [
+            {
+              backgroundColor: selectedVessel.data.map((_, index) => newColor(index)),
+              data: selectedVessel.data.map((dt) => parseFloat(dt.cii)?.toFixed(3) || 0),
+              barPercentage: 0.7,
+              categoryPercentage: 1,
+              fill: true,
+            }
+          ]
+          :
+          [
+            {
+              type: 'line',
+              label: 'IMO Average',
+              borderColor: 'rgb(255, 255, 255)',
+              borderWidth: 3,
+              pointRadius: 10,
+              pointHoverRadius: 11,
+              showLine: false,
+              fill: false,
+              backgroundColor: chartData.map((_, index) => newColor(index)),
+              data: chartData.map((dt) => parseFloat(dt.data[0].imoValue)?.toFixed(3) || 0),
+              categoryPercentage: 1,
+            },
+            {
+              type: 'bar',
+              label: 'CII',
+              backgroundColor: chartData.map((_, index) => newColor(index)),
+              data: chartData.map((dt) => parseFloat(dt.data[0].cii)?.toFixed(3) || 0),
+              barPercentage: 0.7,
+              fill: true,
+            },
+          ];
 
-      setChartData({
-        labels: ciiLabels,
-        datasets,
-      });
+        setChartData({
+          labels: ciiLabels,
+          datasets,
+        });
+      } else {
+        setChartData({
+          labels: [year],
+          datasets: [
+            {
+              type: 'line',
+              label: 'IMO Average',
+              borderColor: 'rgb(255, 255, 255)',
+              borderWidth: 3,
+              pointRadius: 10,
+              pointHoverRadius: 11,
+              showLine: false,
+              fill: false,
+              backgroundColor: newColor(0),
+              data: [chartData.reduce((acc, dt) => acc + (parseFloat(dt.data[0].imoValue) || 0), 0) / chartData.length],
+              categoryPercentage: 1,
+            },
+            {
+              type: 'bar',
+              label: 'CII',
+              backgroundColor: newColor(0),
+              data: [chartData.reduce((acc, dt) => acc + (parseFloat(dt.data[0].cii) || 0), 0) / chartData.length],
+              barPercentage: 0.7,
+              fill: true,
+            },
+          ],
+        });
+      }
     } else if (reportType === REPORT_TYPE_ENUM.ETS) {
       const vessels = Array.from(new Set(chartData.map((dt) => dt.name)));
 
@@ -471,7 +500,7 @@ const ComparisonBox = ({
   };
 
   const handleClickChart = (instance, elements) => {
-    if (elements.length > 0) {
+    if (elements.length > 0 && companyIds !== 'other_companies') {
       if (!selectedVessel) {
         setSelectedVessel(comparisonVoyageData?.chartData?.[elements[0].index]);
       }
@@ -904,8 +933,8 @@ const ComparisonBox = ({
                 stepSize={1}
                 onDblClick={handleDblClickChart}
                 onClick={handleClickChart}
-                xLabel={selectedVessel ? 'Voyages' : 'Vessels'}
-                yLabel="CII Attained"
+                xLabel={companyIds === 'other_companies' ? 'Year' : (selectedVessel ? 'Voyages' : 'Vessels')}
+                yLabel={companyIds === 'other_companies' ? 'Average CII Attained/Required' : 'CII Attained'}
               />
             </Grid>
           ) : (
