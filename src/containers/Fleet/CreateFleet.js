@@ -17,6 +17,8 @@ import CommonTextField from '../../components/Forms/CommonTextField';
 import CommonSelect from '../../components/Forms/CommonSelect';
 import CommonButton from '../../components/Buttons/CommonButton';
 import MultiSelect from '../../components/Forms/MultiSelect';
+import { useAuth } from '../../context/auth.context';
+import { SUPER_ADMIN } from '../../constants/UserRoles';
 
 const PREFIX = 'CreateFleet';
 const classes = {
@@ -83,6 +85,8 @@ const CreateFleet = () => {
   const { createFleet, loading } = useFleet();
   const { vessels, getVessels } = useVessel();
   const { notify } = useSnackbar();
+  const { me } = useAuth();
+  const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
 
   const history = useHistory();
 
@@ -94,6 +98,7 @@ const CreateFleet = () => {
     },
     validationSchema: fleetSchema,
     onSubmit: async (values) => {
+      values.company = me.companyId;
       createFleet(values)
         .then(() => {
           notify('Created successfully!');
@@ -138,16 +143,18 @@ const CreateFleet = () => {
                     loading={loading}
                   />
                 </Box>
-                <Box className={classes.wrapper}>
-                  <Typography component="p">Company</Typography>
-                  <CommonSelect
-                    className={classes.input}
-                    options={companies}
-                    optionLabel="name"
-                    optionValue="id"
-                    {...formik.getFieldProps('company')}
-                  />
-                </Box>
+                {isSuperAdmin && (
+                  <Box className={classes.wrapper}>
+                    <Typography component="p">Company</Typography>
+                    <CommonSelect
+                      className={classes.input}
+                      options={companies}
+                      optionLabel="name"
+                      optionValue="id"
+                      {...formik.getFieldProps('company')}
+                    />
+                  </Box>
+                )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Vessel</Typography>
                   <MultiSelect
