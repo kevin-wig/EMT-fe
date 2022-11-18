@@ -18,6 +18,8 @@ import CommonButton from '../../components/Buttons/CommonButton';
 import CommonDatePicker from '../../components/Forms/DatePicker';
 import Dropzone from '../../components/Forms/Dropzone';
 import { vesselSchema } from '../../validations/vessel.schema';
+import { useAuth } from '../../context/auth.context';
+import { SUPER_ADMIN } from '../../constants/UserRoles';
 
 const PREFIX = 'VesselDetail';
 const classes = {
@@ -119,6 +121,8 @@ const Root = styled('div')(({ theme }) => ({
 }));
 
 const CreateVessel = () => {
+  const { me } = useAuth();
+  const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
   const { vesselTypes, createVessel, getVesselTypes, loading } = useVessel();
   const { companies, getCompanies } = useCompany();
   const { fleets, getFleets } = useFleet();
@@ -157,6 +161,9 @@ const CreateVessel = () => {
         return obj;
       }, {});
 
+      if (!isSuperAdmin) {
+        createVesselData.companyId = me.companyId;
+      }
       createVessel(createVesselData)
         .then(() => {
           notify('Created successfully!');
@@ -243,18 +250,20 @@ const CreateVessel = () => {
                       />
                     </Box>
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Box className={classes.wrapper}>
-                      <Typography component="p">Company</Typography>
-                      <CommonSelect
-                        className={classes.input}
-                        options={companies}
-                        optionLabel="name"
-                        optionValue="id"
-                        {...formik.getFieldProps('companyId')}
-                      />
-                    </Box>
-                  </Grid>
+                  {isSuperAdmin && (
+                    <Grid item xs={12} md={6}>
+                      <Box className={classes.wrapper}>
+                        <Typography component="p">Company</Typography>
+                        <CommonSelect
+                          className={classes.input}
+                          options={companies}
+                          optionLabel="name"
+                          optionValue="id"
+                          {...formik.getFieldProps('companyId')}
+                        />
+                      </Box>
+                    </Grid>
+                  )}
                   <Grid item xs={12} md={6}>
                     <Box className={classes.wrapper}>
                       <Typography>Power Output</Typography>
