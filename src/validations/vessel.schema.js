@@ -26,7 +26,7 @@ export const vesselSchema = Yup.object().shape({
     threeDigitsOnly
   ),
   iceClass: Yup.string().required('Ice class is required'),
-  eedi: Yup.number().required('EEDI is required').min(0).max(100).test(
+  eedi: Yup.number().min(0).max(100).test(
     "inputEntry",
     message,
     threeDigitsOnly
