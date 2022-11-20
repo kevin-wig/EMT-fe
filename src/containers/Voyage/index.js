@@ -1013,9 +1013,9 @@ const Voyage = () => {
                     },
                     maxBarThickness: 30,
                     stacked: true,
-                    scaleLabel: {
+                    title: {
                       display: true,
-                      labelString: 'Voyage ID',
+                      text: 'Voyage ID',
                     },
                   },
                   y: {
@@ -1025,9 +1025,9 @@ const Voyage = () => {
                     gridLines: {
                       display: true,
                     },
-                    scaleLabel: {
+                    title: {
                       display: true,
-                      labelString: "Cost (€)"
+                      text: "Cost (€)"
                     }
                   },
                 }}

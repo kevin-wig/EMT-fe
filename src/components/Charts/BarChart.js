@@ -122,9 +122,9 @@ const BarChart = ({
         gridLines: {
           color: 'transparent',
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: xLabel
+          text: xLabel
         }
       },
       y: {
@@ -138,9 +138,9 @@ const BarChart = ({
         gridLines: {
           color: '#e2e2e2',
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: yLabel
+          text: yLabel
         }
       },
     },

@@ -127,9 +127,9 @@ const LineChart = ({
         gridLines: {
           color: '#e2e2e2',
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: xLabel
+          text: xLabel
         }
       },
       y: {
@@ -141,9 +141,9 @@ const LineChart = ({
         gridLines: {
           color: '#e2e2e2',
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: yLabel
+          text: yLabel
         }
       },
     },
