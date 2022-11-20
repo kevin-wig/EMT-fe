@@ -188,7 +188,7 @@ const Voyage = () => {
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
-  const [year, setYear] = useState('no_year');
+  const [year, setYear] = useState(new Date().getFullYear());
   const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
