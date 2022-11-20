@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -84,6 +84,16 @@ const LineChart = ({
   onClick = () => null,
   onDblClick = () => null,
 }) => {
+  const updatedData = useMemo(() => {
+    if (data.labels.length === 1) {
+      return {
+        ...data,
+        labels: [null, ...data.labels, null],
+        datasets: data.datasets.map((datum) => ({ ...datum, data: [null, ...datum.data, null] })),
+      }
+    }
+    return data;
+  }, [data]);
   const options = {
     onClick,
     maintainAspectRatio: false,
@@ -155,7 +165,7 @@ const LineChart = ({
         <Typography>{title}</Typography>
       </Box>
       <Box className={classes.cardBody}>
-        <Chart data={data} options={options} onDoubleClick={onDblClick} type="line" />
+        <Chart data={updatedData} options={options} onDoubleClick={onDblClick} type="line" />
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>
