@@ -129,9 +129,9 @@ const MultiaxisLineChart = ({
             return label.split(';')[1];
           },
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: xLabel,
+          text: xLabel,
         },
       },
       xAxis2: {
@@ -162,9 +162,9 @@ const MultiaxisLineChart = ({
         ticks: {
           beginAtZero: true,
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: yLabel,
+          text: yLabel,
         },
       },
     },

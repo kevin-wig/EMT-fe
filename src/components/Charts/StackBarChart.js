@@ -116,9 +116,9 @@ const StackBarChart = ({
         gridLines: {
           display: false
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: xLabel
+          text: xLabel
         },
         ticks: {
           maxTicksLimit: 5
@@ -126,9 +126,9 @@ const StackBarChart = ({
         maxBarThickness: 30,
       },
       y: {
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: 'Emissions'
+          text: 'Emissions'
         } ,
         stacked: true,
         gridLines: {

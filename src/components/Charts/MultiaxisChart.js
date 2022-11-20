@@ -119,9 +119,9 @@ const MultiaxisChart = ({
         gridLines: {
           color: 'transparent',
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: xLabel
+          text: xLabel
         }
       },
       'y-axis-1': {
@@ -132,9 +132,9 @@ const MultiaxisChart = ({
           stepSize: 0.005,
           maxTicksLimit: yMaxTicksLimit || 8,
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: y1Label
+          text: y1Label
         } ,
         display: true,
         gridLines: {
@@ -149,9 +149,9 @@ const MultiaxisChart = ({
           stepSize: 0.005,
           maxTicksLimit: yMaxTicksLimit || 8,
         },
-        scaleLabel: {
+        title: {
           display: true,
-          labelString: y2Label
+          text: y2Label
         } ,
         display: true,
         gridLines: {
