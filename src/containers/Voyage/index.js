@@ -260,16 +260,20 @@ const Voyage = () => {
         filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === me?.companyId);
       }
 
+      if (companyId) {
+        filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === companyId);
+      }
+
       if (history.location.state) {
         setVesselId(history.location.state);
-      } else {
-        setVesselId(filteredVessels[0].id);
+      } else if (vesselId !== -1) {
+        setVesselId(filteredVessels[0]?.id || -1);
       }
       return [all, ...filteredVessels];
     } else {
       return [all];
     }
-  }, [vessels]);
+  }, [vessels, companyId]);
 
   const fetchVesselTripsList = useCallback(() => {
     getTrips({ ...filterParams, ...paginationParams })
