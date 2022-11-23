@@ -216,12 +216,12 @@ const Voyage = () => {
         setCiiPerTrip(res.data);
       });
 
-      getVesselFuelChartPerVoyage(filterParams.vesselId, filterParams.fromDate, filterParams.toDate).then((res) => {
+      getVesselFuelChartPerVoyage(vesselId, filterParams.fromDate, filterParams.toDate).then((res) => {
         setFuelChartData(res.data);
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getVoyageCIIChart],
+    [getVoyageCIIChart, vesselId],
   );
 
   const getETSData = useCallback(
