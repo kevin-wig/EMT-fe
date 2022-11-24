@@ -418,7 +418,6 @@ const VesselEts = ({ id, selectedYear }) => {
                 <Grid item xs={12} md={6}>
                   <LineChart
                     title="EUA per vessel"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={etsPerVessel}
                     onClick={handleClickCostChart}
                     onDblClick={handleDblClickCostChart}
@@ -427,7 +426,6 @@ const VesselEts = ({ id, selectedYear }) => {
                 <Grid item xs={12} md={6}>
                   <LineChart
                     title="EUA Cost/Bunker cost and Freight prices"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={costsPerVessel}
                     onClick={handleClickEuaPercentChart}
                     onDblClick={handleDblClickEuaPercentChart}
@@ -442,7 +440,6 @@ const VesselEts = ({ id, selectedYear }) => {
                 <Grid item xs={12} md={6}>
                   <BarChart
                     title="EUA Cost"
-                    updatedDate="Updated yesterday at 11:59 PM"
                     data={costPerVoyage}
                     scales={{
                       xAxes: [{
@@ -471,14 +468,12 @@ const VesselEts = ({ id, selectedYear }) => {
                 <Grid item xs={12} md={6}>
                   <LineChart
                     title="Cumulative EUA"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={cumulativeEuaPerVoyage}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <LineChart
                     title="Relative EUA Cost"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={percentPerVoyage}
                   />
                 </Grid>

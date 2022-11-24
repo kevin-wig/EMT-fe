@@ -268,7 +268,6 @@ const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
         <Grid item xs={12} md={6}>
           <LineChart
             title="CO2 and ETS CO2 emissions(2023)"
-            updatedDate="Update yesterday at 11:59 PM"
             data={euPerVessel}
             height={200}
             xLabel="Vessel"
@@ -277,7 +276,6 @@ const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
         <Grid item xs={12} md={6}>
           <BarChart
             title="Comparison of vessels allowance cost with the fares and bunkers cost for 2023"
-            updatedDate="Update yesterday at 11:59 PM"
             data={certificate}
             yMaxTicksLimit={4}
             height={200}

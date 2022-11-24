@@ -944,7 +944,6 @@ const Voyage = () => {
             <Grid item xs={12} md={6}>
               <LineChart
                 title="CII per voyage"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={ciiChartPerTrip}
                 useCategory={true}
                 xLabel="Voyage ID"
@@ -953,7 +952,6 @@ const Voyage = () => {
             <Grid item xs={12} md={6}>
               <LineChart
                 title="Cumulative CII per voyage"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={ciiChartPerVoyage}
                 useCategory={true}
                 xLabel="Voyage ID"
@@ -962,7 +960,6 @@ const Voyage = () => {
             <Grid item xs={12} md={12}>
               <MultiaxisChart
                 title="Emissions and distance per voyage"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={stackChartPerVoyage}
                 xLabel="Voyage ID"
                 y1Label="Emmisions (tns)"
@@ -973,7 +970,6 @@ const Voyage = () => {
             <Grid item xs={12} md={12}>
               <MultiaxisChart
                 title="Comparison of fuel types and cost"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={fuelChartPerVoyage}
                 xLabel="Voyage ID"
                 y1Label="Fuel quantity(tns)"
@@ -1007,7 +1003,6 @@ const Voyage = () => {
             <Grid item xs={12} md={6}>
               <BarChart
                 title="Cost per voyage"
-                updatedDate="Updated yesterday at 11:59 PM"
                 data={costPerVoyage}
                 scales={{
                   x: {
@@ -1045,7 +1040,6 @@ const Voyage = () => {
             <Grid item xs={12} md={6}>
               <LineChart
                 title="Cumulative EUA"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={cumulativeEuaPerVoyage}
                 xLabel="Voyage ID"
                 yLabel="Cost (€)"
@@ -1054,7 +1048,6 @@ const Voyage = () => {
             <Grid item xs={12} md={12}>
               <LineChart
                 title="Relative EUA Cost"
-                updatedDate="Update yesterday at 11:59 PM"
                 data={percentPerVoyage}
                 xLabel="Voyage ID"
               />

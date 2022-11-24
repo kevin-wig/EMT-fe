@@ -711,7 +711,6 @@ const VesselCII = ({ id, selectedYear }) => {
               <Grid item xs={12} md={12}>
                 <LineChart
                   title="CII over time"
-                  updatedDate="Update yesterday at 11:59 PM"
                   data={data}
                   onClick={handleClickChart}
                   onDblClick={handleDblClickChart}
@@ -728,28 +727,24 @@ const VesselCII = ({ id, selectedYear }) => {
                 <Grid item xs={12} md={6}>
                   <LineChart
                     title="CII per voyage"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={ciiChartPerTrip}
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <LineChart
                     title="Cumulative CII per voyage"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={ciiChartPerVoyage}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <StackBarChart
                     title="Emissions and distance per voyage"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={stackChartPerVoyage}
                   />
                 </Grid>
                 <Grid item xs={12} md={12}>
                   <MultiaxisChart
                     title="Comparison of fuel types and cost"
-                    updatedDate="Update yesterday at 11:59 PM"
                     data={fuelChartPerVoyage}
                   />
                 </Grid>
