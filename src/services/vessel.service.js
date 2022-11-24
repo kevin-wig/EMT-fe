@@ -297,9 +297,9 @@ export async function getVesselStackChartPerVoyage({id, year, month, mode, fromD
     .catch((err) => Promise.reject(err));
 }
 
-export async function getVesselFuelChartPerVoyage({id, year, month, mode, fromDate, toDate}) {
+export async function getVesselFuelChartPerVoyage(id, { companyId, year, month, mode, fromDate, toDate}) {
   return apiClient
-    .get(`/vessel-trips/vessel-voyage/${id}/chart`, { params: { mode, year, month, fromDate, toDate } })
+    .get(`/vessel-trips/vessel-voyage/${id}/chart`, { params: { companyId, mode, year, month, fromDate, toDate } })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }
