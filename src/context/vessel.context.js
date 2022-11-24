@@ -163,10 +163,10 @@ function VesselProvider(props) {
       .catch(handleError);
   }, []);
 
-  const getVesselFuelChartPerVoyage = useCallback(async (id, fromDate, toDate) => {
+  const getVesselFuelChartPerVoyage = useCallback(async (id, params) => {
     setLoading(true);
     return VesselsService
-      .getVesselFuelChartPerVoyage({id, fromDate, toDate})
+      .getVesselFuelChartPerVoyage(id, params)
       .then(handleSuccess)
       .catch(handleError);
   }, []);

@@ -214,7 +214,8 @@ const VesselCII = ({ id, selectedYear }) => {
         setStackChartData(res.data);
       });
 
-      getVesselFuelChartPerVoyage(id, fromDate?.toISOString(), toDate?.toISOString()).then((res) => {
+      getVesselFuelChartPerVoyage(id, { fromDate: fromDate?.toISOString(), toDate: toDate?.toISOString()
+    }).then((res) => {
         setFuelChartData(res.data);
       });
 

@@ -216,12 +216,17 @@ const Voyage = () => {
         setCiiPerTrip(res.data);
       });
 
-      getVesselFuelChartPerVoyage(filterParams.vesselId, filterParams.fromDate, filterParams.toDate).then((res) => {
+      const filterVesselId = vesselId < 0 ? 0 : vesselId;
+      getVesselFuelChartPerVoyage(filterVesselId, {
+        fromDate: filterParams.fromDate,
+        toDate: filterParams.toDate,
+        ...(!filterVesselId ? { companyId } : {}),
+      }).then((res) => {
         setFuelChartData(res.data);
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getVoyageCIIChart],
+    [getVoyageCIIChart, vesselId, companyId],
   );
 
   const getETSData = useCallback(
