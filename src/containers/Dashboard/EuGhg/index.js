@@ -216,7 +216,6 @@ const DashboardEuGhg = ({ company, thisYear }) => {
         <Grid item xs={12} md={6}>
           <HorizontalBarChart
             title="GHG actual values vs target values and compliance units"
-            updatedDate="Update yesterday at 11:59 PM"
             data={complianceUnits}
             yMaxTicksLimit={4}
             height={250}
@@ -226,7 +225,6 @@ const DashboardEuGhg = ({ company, thisYear }) => {
         <Grid item xs={12} md={6}>
           <HorizontalBarChart
             title="Compliance units and penalty per vessel"
-            updatedDate="Update yesterday at 11:59 PM"
             data={certificate}
             yMaxTicksLimit={4}
             height={250}

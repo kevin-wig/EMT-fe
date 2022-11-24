@@ -305,7 +305,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
         <Grid item xs={12} md={6}>
           <LineChart
             title="CII over time"
-            updatedDate="Update yesterday at 11:59 PM"
             data={ciiOverTime}
             yMaxTicksLimit={5}
             height={200}
@@ -318,7 +317,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
         <Grid item xs={12} md={6}>
           <BarChart
             title="CII Categories Per Year"
-            updatedDate="Update yesterday at 11:59 PM"
             data={certificate}
             yMax={3}
             yMaxTicksLimit={4}
