@@ -168,6 +168,18 @@ const ComparisonBox = ({
   const [imoAverageMode, setIMOAverageMode] = useState(false);
   const [selectedDWTList, setSelectedDWTList] = useState([]);
   const [multiaxisData, setMultiaxisData] = useState();
+  const companyOptions = useMemo(() => {
+    const allCompanies = [
+      {
+        id: 'imo_average',
+        name: 'IMO average',
+      },
+      ...companies,
+      ...(me?.userRole?.role !== SUPER_ADMIN ? [{ id: me.company.id, name: me.company.name }, { id: 'other_companies', name: 'Other companies' }] : [])
+    ];
+    const ids = Array.from(new Set(allCompanies.map((company) => company.id)));
+    return ids.map((id) => allCompanies.find((company) => company.id === id));
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -687,14 +699,7 @@ const ComparisonBox = ({
                   <Typography component="p">Company</Typography>
                   <CommonSelect
                     className={classes.input}
-                    options={[
-                      ...companies,
-                      {
-                        id: 'imo_average',
-                        name: 'IMO average',
-                      },
-                      ...(me?.userRole?.role !== SUPER_ADMIN ? [{ id: me.company.id, name: me.company.name }, { id: 'other_companies', name: 'Other companies' }] : [])
-                    ]}
+                    options={companyOptions}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
