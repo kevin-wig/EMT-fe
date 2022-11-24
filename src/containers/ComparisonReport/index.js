@@ -176,7 +176,7 @@ const ComparisonReport = () => {
             key={box.id}
             id={box.id}
             user={me}
-            companies={companies ? companies : [me.company]}
+            companies={companies ? companies : me.company ? [me.company] : []}
             fleets={fleets}
             vessels={vessels}
             vesselTypes={vesselTypes}

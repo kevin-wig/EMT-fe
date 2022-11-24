@@ -66,6 +66,7 @@ const CommonSelect = ({
   optionLabel,
   disabled,
   error,
+  renderValue,
 }) => {
   return (
     <FormControl variant="standard" className={className}>
@@ -78,6 +79,7 @@ const CommonSelect = ({
         input={<BootstrapInput style={{background: disabled ? "#ccc" : "#fff", borderRadius: "10px" }} disabled={disabled} />}
         disabled={disabled}
         IconComponent={KeyboardArrowDownIcon}
+        renderValue={renderValue}
         MenuProps={{
           anchorOrigin: {
             vertical: 'bottom',
