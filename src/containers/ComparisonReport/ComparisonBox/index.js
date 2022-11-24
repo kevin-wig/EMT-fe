@@ -808,6 +808,7 @@ const ComparisonBox = ({
                     optionValue="id"
                     {...formik.getFieldProps('vesselIds')}
                     disabled={imoAverageMode || companyIds === 'other_companies'}
+                    clearable
                     onChange={handleOnVesselChange}
                   />
                 </Box>
