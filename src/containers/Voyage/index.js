@@ -220,7 +220,7 @@ const Voyage = () => {
       getVesselFuelChartPerVoyage(filterVesselId, {
         fromDate: filterParams.fromDate,
         toDate: filterParams.toDate,
-        ...(!filterVesselId ? { companyId } : {}),
+        ...((!filterVesselId && companyId > 0) ? { companyId } : {}),
       }).then((res) => {
         setFuelChartData(res.data);
       });
