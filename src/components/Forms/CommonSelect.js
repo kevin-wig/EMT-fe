@@ -79,6 +79,9 @@ const CommonSelect = ({
     if (multiple && clearable && value?.length) {
       return value.some((val) => !!val);
     }
+    if (!multiple) {
+      return !!value;
+    }
     return false;
   }, [clearable, value]);
 
