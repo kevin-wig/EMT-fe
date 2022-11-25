@@ -6,6 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { UserRoles } from "../../constants/UserRoles";
+import IconButton from '@mui/material/IconButton';
+import ClearIcon from '@mui/icons-material/Clear';
+import { useCallback, useMemo, useRef } from 'react';
 
 const Error = styled('p')(({ theme }) => ({
   '&': {
@@ -62,12 +65,38 @@ const CommonSelect = ({
   onChange,
   options,
   multiple= false,
+  clearable= false,
+  placeholder = '',
   optionValue,
   optionLabel,
   disabled,
   error,
   renderValue,
 }) => {
+  const inputRef = useRef(null);
+
+  const isClearableNow = useMemo(() => {
+    if (multiple && clearable && value?.length) {
+      return value.some((val) => !!val);
+    }
+    return false;
+  }, [clearable, value]);
+
+  const handleClickNone = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange({ target: { value: multiple ? [''] : '', name } });
+  }, []);
+
+  const optionRender = [
+    ...(placeholder ? [<MenuItem key="placeholder" value="" onClick={handleClickNone}>{placeholder}</MenuItem>] : []),
+    ...(options ? options.map((option, key) => option && (
+      <MenuItem key={key} value={optionValue ? option[optionValue] : option.value}>
+        {optionLabel ? optionLabel === 'role' ? UserRoles[option[optionLabel]] : option[optionLabel] : option.label}
+      </MenuItem>)
+    ) : [])
+  ];
+
   return (
     <FormControl variant="standard" className={className}>
       <MuiSelect
@@ -76,7 +105,7 @@ const CommonSelect = ({
         name={name}
         value={isNaN(value) ? value || '' : value}
         onChange={onChange}
-        input={<BootstrapInput style={{background: disabled ? "#ccc" : "#fff", borderRadius: "10px" }} disabled={disabled} />}
+        input={<BootstrapInput inputRef={inputRef} style={{background: disabled ? "#ccc" : "#fff", borderRadius: "10px" }} disabled={disabled} />}
         disabled={disabled}
         IconComponent={KeyboardArrowDownIcon}
         renderValue={renderValue}
@@ -90,14 +119,22 @@ const CommonSelect = ({
             horizontal: 'left',
           },
         }}
-      >
-        {options ? options.map((option, key) => option && (
-          <MenuItem key={key} value={optionValue ? option[optionValue] : option.value}>
-            {optionLabel ? optionLabel === 'role' ? UserRoles[option[optionLabel]] : option[optionLabel] : option.label}
-          </MenuItem>
-        )) : (
-          <MenuItem>No items</MenuItem>
+        endAdornment={(
+          <IconButton
+            size="small"
+            sx={{ visibility: isClearableNow ? 'visible' : 'hidden', position: 'absolute', right: 25 }}
+            onClick={() => {
+              if (inputRef.current) {
+                inputRef.current.value = multiple ? [] : '';
+                onChange({ target: { value: multiple ? [] : '', name } });
+              }
+            }}
+          >
+            <ClearIcon />
+          </IconButton>
         )}
+      >
+        {optionRender}
       </MuiSelect>
       {error && <Error>{error}</Error>}
     </FormControl>
