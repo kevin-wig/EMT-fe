@@ -76,7 +76,7 @@ const CommonSelect = ({
   const inputRef = useRef(null);
 
   const isClearableNow = useMemo(() => {
-    if (multiple && clearable && value?.length) {
+    if ((multiple || Array.isArray(value)) && clearable && value?.length) {
       return value.some((val) => !!val);
     }
     if (!multiple) {

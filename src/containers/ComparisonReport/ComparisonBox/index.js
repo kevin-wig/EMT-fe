@@ -672,13 +672,18 @@ const ComparisonBox = ({
 
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
+    const prevCompanyIds = formik.values.companyIds;
 
     if (admin && selectedValues.includes('')) {
       selectedValues = companies.map((company) => company.id);
     }
 
     if (admin && selectedValues.indexOf('imo_average') > -1) {
-      selectedValues = ['imo_average'];
+      if (selectedValues.length > 1 && prevCompanyIds.includes('imo_average')) {
+        selectedValues = selectedValues.filter((val) => val !== 'imo_average');
+      } else {
+        selectedValues = ['imo_average'];
+      }
     }
     e.target.value = selectedValues;
 
@@ -703,7 +708,7 @@ const ComparisonBox = ({
     <Root className={classes.root}>
       <Card className={classes.card}>
         <CardContent className={classes.cardBody}>
-          <Box marginBottom={1} display="flex" justifyContent="end">
+          <Box marginBottom={1} display="flex" justifyContent="end" visibility={!imoAverageMode ? 'visible' : 'hidden'}>
             <CommonMenu
               label={`Year - ${year}`}
               items={YEARS_OPTION}
