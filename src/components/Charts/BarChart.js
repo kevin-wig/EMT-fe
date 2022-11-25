@@ -152,7 +152,7 @@ const BarChart = ({
         <Typography>{title}</Typography>
       </Box>
       <Box className={classes.cardBody}>
-        <Bar data={data} options={chartOptions} onDoubleClick={onDblClick} />
+        <Bar data={data} options={chartOptions} onDoubleClick={onDblClick} type="bar"/>
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>

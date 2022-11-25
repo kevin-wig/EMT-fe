@@ -6,6 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { UserRoles } from "../../constants/UserRoles";
+import IconButton from '@mui/material/IconButton';
+import ClearIcon from '@mui/icons-material/Clear';
+import { useMemo, useRef } from 'react';
 
 const Error = styled('p')(({ theme }) => ({
   '&': {
@@ -62,12 +65,22 @@ const CommonSelect = ({
   onChange,
   options,
   multiple= false,
+  clearable= false,
   optionValue,
   optionLabel,
   disabled,
   error,
   renderValue,
 }) => {
+  const inputRef = useRef(null);
+
+  const isClearableNow = useMemo(() => {
+    if (clearable && value?.length) {
+      return value.some((val) => !!val);
+    }
+    return false;
+  }, [clearable, value]);
+
   return (
     <FormControl variant="standard" className={className}>
       <MuiSelect
@@ -76,7 +89,7 @@ const CommonSelect = ({
         name={name}
         value={isNaN(value) ? value || '' : value}
         onChange={onChange}
-        input={<BootstrapInput style={{background: disabled ? "#ccc" : "#fff", borderRadius: "10px" }} disabled={disabled} />}
+        input={<BootstrapInput inputRef={inputRef} style={{background: disabled ? "#ccc" : "#fff", borderRadius: "10px" }} disabled={disabled} />}
         disabled={disabled}
         IconComponent={KeyboardArrowDownIcon}
         renderValue={renderValue}
@@ -90,6 +103,20 @@ const CommonSelect = ({
             horizontal: 'left',
           },
         }}
+        endAdornment={(
+          <IconButton
+            size="small"
+            sx={{ visibility: isClearableNow ? 'visible' : 'hidden', position: 'absolute', right: 25 }}
+            onClick={() => {
+              if (inputRef.current) {
+                inputRef.current.value = multiple ? [] : '';
+                onChange({ target: { value: multiple ? [] : '', name } });
+              }
+            }}
+          >
+            <ClearIcon />
+          </IconButton>
+        )}
       >
         {options ? options.map((option, key) => option && (
           <MenuItem key={key} value={optionValue ? option[optionValue] : option.value}>
