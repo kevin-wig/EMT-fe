@@ -71,6 +71,7 @@ const Vessel = () => {
 
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
+  const [canUpload, setCanUpload] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
@@ -108,6 +109,23 @@ const Vessel = () => {
       getCompanies();
     }
   }, [isSuperAdmin]);
+
+  useEffect(() => {
+    if (parsedData && Array.isArray(parsedData)) {
+      if (isSuperAdmin || parsedData.every((datum) => datum.company === me?.company?.name)) {
+        setCanUpload(true);
+      } else {
+        if (!isSuperAdmin) {
+          notify('You can\'t create vessels for other companies. Please check the company field.', 'error');
+        } else {
+          notify('Somethings went wrong with uploaded data.', 'error');
+        }
+        setCanUpload(false);
+      }
+    } else {
+      setCanUpload(false);
+    }
+  }, [isSuperAdmin, parsedData, me?.company?.name]);
 
   useEffect(() => {
     if (getVesselsList) {
@@ -245,7 +263,7 @@ const Vessel = () => {
           <Dropzone files={files} onChangeFiles={handleChangeFiles} />
           <Box className={classes.fileAction}>
             <CommonButton color="secondary" onClick={handleDownloadSample}>Download template</CommonButton>
-            <CommonButton onClick={handleSaveUpload}>Save upload</CommonButton>
+            <CommonButton disabled={!canUpload} onClick={handleSaveUpload}>Save upload</CommonButton>
           </Box>
         </Card>
       )}
