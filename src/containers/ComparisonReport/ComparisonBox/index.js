@@ -648,7 +648,7 @@ const ComparisonBox = ({
   const handleChangeFleets = (e) => {
     const value = e.target.value;
     const prevValue = formik.values.fleets;
-    if (value.includes(undefined) && !prevValue.includes(undefined) && prevValue.length) {
+    if (!value.length || (value.includes(undefined) && !prevValue.includes(undefined) && prevValue.length)) {
       e.target.value = [undefined];
     } else {
       e.target.value = value.filter((val) => val);
@@ -707,6 +707,7 @@ const ComparisonBox = ({
                     error={
                       formik.touched.reportType && formik.errors.reportType
                     }
+                    clearable
                   />
                 </Box>
               </Grid>
@@ -720,6 +721,7 @@ const ComparisonBox = ({
                     optionLabel="name"
                     optionValue="id"
                     {...formik.getFieldProps('companyIds')}
+                    clearable
                     onChange={(e) => handleCompanyChange(e)}
                   />
                 </Box>
@@ -736,6 +738,7 @@ const ComparisonBox = ({
                     {...formik.getFieldProps('fleets')}
                     disabled={imoAverageMode || companyIds === 'other_companies'}
                     onChange={handleChangeFleets}
+                    clearable
                   />
                 </Box>
               </Grid>
@@ -750,6 +753,7 @@ const ComparisonBox = ({
                     optionValue="key"
                     disabled={imoAverageMode}
                     {...formik.getFieldProps('fuelType')}
+                    clearable
                   />
                 </Box>
               </Grid>
@@ -764,6 +768,7 @@ const ComparisonBox = ({
                     optionLabel="label"
                     optionValue="key"
                     disabled={imoAverageMode}
+                    clearable
                   />
                 </Box>
               </Grid>
@@ -778,6 +783,7 @@ const ComparisonBox = ({
                     onChange={handleVesselTypeChange}
                     optionLabel="name"
                     optionValue="id"
+                    clearable
                   />
                 </Box>
               </Grid>
@@ -792,6 +798,7 @@ const ComparisonBox = ({
                       value={formik.values.dwt}
                       optionLabel="label"
                       optionValue="key"
+                      clearable
                       // disabled={imoAverageMode}
                     />
                   </Box>

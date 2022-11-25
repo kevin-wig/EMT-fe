@@ -8,7 +8,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { UserRoles } from "../../constants/UserRoles";
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 const Error = styled('p')(({ theme }) => ({
   '&': {
@@ -74,6 +74,13 @@ const CommonSelect = ({
 }) => {
   const inputRef = useRef(null);
 
+  const isClearableNow = useMemo(() => {
+    if (clearable && value?.length) {
+      return value.some((val) => !!val);
+    }
+    return false;
+  }, [clearable, value]);
+
   return (
     <FormControl variant="standard" className={className}>
       <MuiSelect
@@ -99,12 +106,11 @@ const CommonSelect = ({
         endAdornment={(
           <IconButton
             size="small"
-            sx={{ visibility: (clearable && inputRef.current?.value?.length) ? 'visible' : 'hidden', position: 'absolute', right: 25 }}
+            sx={{ visibility: isClearableNow ? 'visible' : 'hidden', position: 'absolute', right: 25 }}
             onClick={() => {
               if (inputRef.current) {
                 inputRef.current.value = multiple ? [] : '';
-                // console.log(inputRef.current);
-                // inputRef.current.node.onChange();
+                onChange({ target: { value: multiple ? [] : '', name } });
               }
             }}
           >
