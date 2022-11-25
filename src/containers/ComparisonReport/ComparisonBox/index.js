@@ -182,10 +182,6 @@ const ComparisonBox = ({
   }, [companies, me]);
 
   const fleetOptions = useMemo(() => [
-    {
-      id: undefined,
-      name: 'No fleet',
-    },
     ...fleetList,
   ], [fleetList]);
 
@@ -195,7 +191,7 @@ const ComparisonBox = ({
       companyIds: admin ? [] : me?.company?.id || '',
       fuelType: [],
       vesselIds: [],
-      fleets: [undefined],
+      fleets: [''],
       vesselAge: '',
       vesselWeight: [0, 0],
       dwt: ['', ''],
@@ -206,7 +202,10 @@ const ComparisonBox = ({
 
       const payload = {
         ...values,
+        companyIds: admin ? values?.companyIds.filter((companyId) => companyId) : companyIds,
         fleets: values?.fleets.filter((fleet) => fleet),
+        fuelType: values?.fuelType.filter((fuelType) => fuelType),
+        vesselIds: values?.vesselIds.filter((vesselId) => vesselId),
         dwt: values?.vesselType && values?.dwt && VESSEL_DWT.find(dwt => dwt.id === values?.vesselType)?.values[values?.dwt]?.split(/[-|+]/g).map(v => Number(v)),
       };
       const options = getParameters(payload);
@@ -342,9 +341,10 @@ const ComparisonBox = ({
 
   useEffect(() => {
     const state = formik.values;
+    const fleets = state.fleets?.filter((fleet) => !!fleet);
     const selectedVesselsList = vessels
       .filter((vessel) => !state.companyIds || (Array.isArray(state.companyIds) ? (!state.companyIds.length || state.companyIds.includes(vessel.companyId)) : state.companyIds === vessel.companyId))
-      .filter((vessel) => !state.fleets || !state.fleets.length || state.fleets.includes(vessel?.fleet?.id))
+      .filter((vessel) => fleets || fleets.length || fleets.includes(vessel?.fleet?.id))
       .filter((vessel) => !state.vesselType || vessel.vesselTypeId === +state.vesselType)
       .filter((vessel, index) => {
         if (state.vesselAge) {
@@ -596,9 +596,15 @@ const ComparisonBox = ({
     setFilter(!filter);
   };
 
+  const handleOnFuelTypesChange = (e) => {
+    setChangedPayload(!changedPayload);
+    const fuelTypes = e.target.value.includes('') ? FUEL_TYPES_OPTIONS.map((fuelType) => fuelType.key) : e.target.value;
+    formik.setFieldValue('fuelType', fuelTypes);
+  }
+
   const handleOnVesselChange = (e) => {
     setChangedPayload(!changedPayload);
-    const vesselIds = e.target.value;
+    const vesselIds = e.target.value.includes('') ? (vesselList || []).map((vessel) => vessel.id) : e.target.value;
     formik.setFieldValue('vesselIds', vesselIds);
 
     if (vesselIds.length < 2) {
@@ -637,8 +643,8 @@ const ComparisonBox = ({
     formik.setFieldValue('dwt', vesselDWT);
   };
 
-  const handleChangeCompanyIds = (e) => {
-    const selectedCompanies = companies.filter((company) => !e.target.value || !e.target.value.length || e.target.value.includes(company.id));
+  const handleChangeCompanyIds = (value) => {
+    const selectedCompanies = companies.filter((company) => !value || !value.length || value.includes(company.id));
     const fleets = selectedCompanies.map(company => company.fleets).flat();
 
     setFleetList(fleets);
@@ -649,7 +655,7 @@ const ComparisonBox = ({
     const value = e.target.value;
     const prevValue = formik.values.fleets;
     if (!value.length || (value.includes(undefined) && !prevValue.includes(undefined) && prevValue.length)) {
-      e.target.value = [undefined];
+      e.target.value = [''];
     } else {
       e.target.value = value.filter((val) => val);
     }
@@ -666,6 +672,16 @@ const ComparisonBox = ({
 
   const handleCompanyChange = (e) => {
     let selectedValues = e.target.value;
+
+    if (admin && selectedValues.includes('')) {
+      selectedValues = companies.map((company) => company.id);
+    }
+
+    if (admin && selectedValues.indexOf('imo_average') > -1) {
+      selectedValues = ['imo_average'];
+    }
+    e.target.value = selectedValues;
+
     if ((admin && selectedValues.indexOf('imo_average') > -1) || selectedValues === 'imo_average') {
       setIMOAverageMode(true);
       formik.setFieldValue('reportType', 'cii');
@@ -674,7 +690,8 @@ const ComparisonBox = ({
       setIMOAverageMode(false);
     }
     setFilter(!filter);
-    handleChangeCompanyIds(e);
+
+    handleChangeCompanyIds(selectedValues);
     formik.setFieldValue(
       'vesselIds',
       vessels?.map((vessel) => vessel?.id) || [],
@@ -717,6 +734,7 @@ const ComparisonBox = ({
                   <CommonSelect
                     className={classes.input}
                     options={companyOptions}
+                    placeholder={admin ? 'All companies' : ''}
                     multiple={admin}
                     optionLabel="name"
                     optionValue="id"
@@ -732,6 +750,7 @@ const ComparisonBox = ({
                   <CommonSelect
                     className={classes.input}
                     options={fleetOptions}
+                    placeholder="No fleet"
                     multiple
                     optionLabel="name"
                     optionValue="id"
@@ -749,11 +768,13 @@ const ComparisonBox = ({
                     multiple
                     className={classes.input}
                     options={FUEL_TYPES_OPTIONS}
+                    placeholder="All fuel type"
                     optionLabel="label"
                     optionValue="key"
                     disabled={imoAverageMode}
                     {...formik.getFieldProps('fuelType')}
                     clearable
+                    onChange={handleOnFuelTypesChange}
                   />
                 </Box>
               </Grid>
@@ -810,6 +831,7 @@ const ComparisonBox = ({
                   <CommonSelect
                     multiple
                     className={classes.input}
+                    placeholder="All vessels"
                     options={vesselList}
                     optionLabel="name"
                     optionValue="id"

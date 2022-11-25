@@ -8,7 +8,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { UserRoles } from "../../constants/UserRoles";
 import IconButton from '@mui/material/IconButton';
 import ClearIcon from '@mui/icons-material/Clear';
-import { useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 const Error = styled('p')(({ theme }) => ({
   '&': {
@@ -66,6 +66,7 @@ const CommonSelect = ({
   options,
   multiple= false,
   clearable= false,
+  placeholder = '',
   optionValue,
   optionLabel,
   disabled,
@@ -75,11 +76,30 @@ const CommonSelect = ({
   const inputRef = useRef(null);
 
   const isClearableNow = useMemo(() => {
-    if (clearable && value?.length) {
+    if (multiple && clearable && value?.length) {
       return value.some((val) => !!val);
+    }
+    if (!multiple) {
+      return !!value;
     }
     return false;
   }, [clearable, value]);
+
+  const handleClickNone = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange({ target: { value: multiple ? [''] : '', name } });
+  }, []);
+
+  const optionRender = [
+    ...(placeholder ? [<MenuItem key="placeholder" value="" onClick={handleClickNone}>{placeholder}</MenuItem>] : []),
+    ...(options ? options.map((option, key) => option && (
+      <MenuItem key={key} value={optionValue ? option[optionValue] : option.value}>
+        {optionLabel ? optionLabel === 'role' ? UserRoles[option[optionLabel]] : option[optionLabel] : option.label}
+      </MenuItem>)
+    ) : [])
+  ];
+
 
   return (
     <FormControl variant="standard" className={className}>
@@ -118,13 +138,7 @@ const CommonSelect = ({
           </IconButton>
         )}
       >
-        {options ? options.map((option, key) => option && (
-          <MenuItem key={key} value={optionValue ? option[optionValue] : option.value}>
-            {optionLabel ? optionLabel === 'role' ? UserRoles[option[optionLabel]] : option[optionLabel] : option.label}
-          </MenuItem>
-        )) : (
-          <MenuItem>No items</MenuItem>
-        )}
+        {optionRender}
       </MuiSelect>
       {error && <Error>{error}</Error>}
     </FormControl>
