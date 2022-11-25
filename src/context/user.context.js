@@ -140,9 +140,9 @@ function UserProvider(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const requestChangePassword = useCallback(async (user) => {
+  const requestChangePassword = useCallback(async (email) => {
     setLoading(true);
-    return await UserService.requestChangePassword(user)
+    return await UserService.requestChangePassword(email)
       .then(handleSuccess)
       .catch(handleError);
   }, []);

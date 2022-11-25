@@ -153,6 +153,7 @@ const UserDetail = ({ match }) => {
       formik.setFieldValue('companyId', '');
     }
   }, [selectedRole]);
+
   useEffect(() => {
     if (isEditEnable) {
       const isCreate = isNaN(match?.params?.id);
@@ -214,7 +215,7 @@ const UserDetail = ({ match }) => {
   };
 
   const handleChangePassword = () => {
-    requestChangePassword();
+    requestChangePassword(currentUser.email);
   };
 
   const tempRoleOption = currentUser ? [currentUser?.userRole] : [];
