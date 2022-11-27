@@ -14,7 +14,7 @@ import DataTable from '../../../components/Table/DataTable';
 import FilterModal from '../../../components/Modals/FleetModal';
 import { SUPER_ADMIN } from '../../../constants/UserRoles';
 import { newColor } from '../../../constants/ChartColors';
-import { MONTHS, VESSEL_CATEGORIES_ENUM } from '../../../constants/Global';
+import { MONTHS, VESSEL_CATEGORIES, VESSEL_CATEGORIES_ENUM } from '../../../constants/Global';
 import { genYearArray } from '../../../utils/yearArray';
 
 const DashboardCII = ({ company, thisYear, type }) => {
@@ -131,7 +131,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
       ...acc,
       ...(dt?.data?.map((datum) => datum.key) || []),
     ], [2026]));
-    console.log(years);
 
     return {
       labels: ciiChartYear ? MONTHS : years,
@@ -164,7 +163,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
       ...acc,
       ...(dt?.data?.map((datum) => datum.key) || []),
     ], [2026]));
-    console.log(years);
 
     return {
       labels: categoryChartYear ? MONTHS : years,
@@ -181,7 +179,7 @@ const DashboardCII = ({ company, thisYear, type }) => {
 
     return {
       labels: categoryLabels.labels,
-      datasets: categories.map((category) => ({
+      datasets: VESSEL_CATEGORIES.map((category) => ({
         label: category,
         backgroundColor: newColor(VESSEL_CATEGORIES_ENUM[category]),
         data: categoryLabels.keys.map((key) => vesselsEmissionChart
@@ -287,7 +285,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
   };
 
   console.log(certificate);
-  console.log(vesselsEmissionChart);
   return (
     <>
       <Grid container spacing={3} sx={{ marginBottom: '1.5rem' }} id="converting-pdf">
