@@ -197,9 +197,6 @@ const CreateVessel = () => {
         <Grid item xs={12} md={8} lg={6} xl={6}>
           <Card className={classes.card}>
             <CardContent className={classes.cardBody}>
-              <Box className={classes.wrapper}>
-                <Dropzone files={files} onChangeFiles={handleChangeFiles} />
-              </Box>
               <form onSubmit={formik.handleSubmit}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
