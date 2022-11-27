@@ -12,7 +12,7 @@ import {
   LineController,
   BarController,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Chart } from 'react-chartjs-2';
 import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -152,7 +152,7 @@ const BarChart = ({
         <Typography>{title}</Typography>
       </Box>
       <Box className={classes.cardBody}>
-        <Bar data={data} options={chartOptions} onDoubleClick={onDblClick} type="bar"/>
+        <Chart data={data} options={chartOptions} onDoubleClick={onDblClick} type="bar"/>
       </Box>
       <Box className={classes.cardFooter}>
         <Typography variant="body2" component="h2">{updatedDate}</Typography>
