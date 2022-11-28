@@ -284,7 +284,6 @@ const DashboardCII = ({ company, thisYear, type }) => {
     }
   };
 
-  console.log(certificate);
   return (
     <>
       <Grid container spacing={3} sx={{ marginBottom: '1.5rem' }} id="converting-pdf">

@@ -64,8 +64,8 @@ const CommonSelect = ({
   value,
   onChange,
   options,
-  multiple= false,
-  clearable= false,
+  multiple = false,
+  clearable = false,
   placeholder = '',
   optionValue,
   optionLabel,
@@ -76,7 +76,10 @@ const CommonSelect = ({
   const inputRef = useRef(null);
 
   const isClearableNow = useMemo(() => {
-    if ((multiple || Array.isArray(value)) && clearable && value?.length) {
+    if (!clearable) {
+      return false;
+    }
+    if ((multiple || Array.isArray(value)) && value?.length) {
       return value.some((val) => !!val);
     }
     if (!multiple) {
