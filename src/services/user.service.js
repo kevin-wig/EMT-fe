@@ -59,9 +59,9 @@ export async function removeUserById(id) {
     .catch((err) => Promise.reject(err));
 }
 
-export async function requestChangePassword() {
+export async function requestChangePassword(email) {
   return apiClient
-    .get(`users/request-change-password`)
+    .post(`users/request-change-password`, { email })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }
