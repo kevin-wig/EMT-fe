@@ -12,7 +12,7 @@ export const exportAsPdf = (id, fileName) => {
     pdf.addImage(contentDataURL, "PNG", 0, 0, imgWidth, imgHeight);
     pdf.save(fileName);
   }).catch((e) => {
-    console.log(e)
+    console.error(e)
   });
 };
 
@@ -26,7 +26,7 @@ export const getScreenShot = async (id) => {
         });
       }))
     }).catch((e) => {
-      console.log(e)
+      console.error(e)
     });
   } else {
     return null;

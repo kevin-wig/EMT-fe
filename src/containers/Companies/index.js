@@ -64,7 +64,7 @@ const DeleteMsg = styled('p')(() => ({
 
 const Companies = () => {
   const { me } = useAuth();
-  const { companies, getCompaniesList, pagination, removeCompany } = useCompany();
+  const { companies, getCompaniesList, pagination, removeCompany, setFilterCompany } = useCompany();
   const history = useHistory();
 
   const [search, setSearch] = useState('');
@@ -142,7 +142,10 @@ const Companies = () => {
 
   const deleteUser = useCallback((isDelete) => {
     if (isDelete) {
-      removeCompany(deletingCompany).then(() => fetchCompaniesList());
+      removeCompany(deletingCompany).then(() => {
+        setFilterCompany(companies[0]?.id);
+        fetchCompaniesList();
+      });
     }
     setDeletingCompany(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps

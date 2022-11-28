@@ -143,7 +143,6 @@ const MixedChart = ({
         },
 
         onClick(e, legendItem, legend) {
-          console.log(legendItem);
           legend.chart.toggleDataVisibility(legendItem.index);
           legend.chart.update();
         },
