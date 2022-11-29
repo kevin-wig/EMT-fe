@@ -106,7 +106,7 @@ const UserDetail = ({ match }) => {
   const { getUser, roles, getRoles, updateUser, removeUser, createUser, loading, requestChangePassword } = useUser();
   const [currentUser, setCurrentUser] = useState();
   const history = useHistory();
-  const visibleRoles = (roles || []).filter((role) => me.userRole?.role === SUPER_ADMIN || role.role !== SUPER_ADMIN);
+  const visibleRoles = (roles || []).filter((role) => role.role !== SUPER_ADMIN);
 
   const isProfilePage = useMemo(() => {
     return match?.path === '/profile';
