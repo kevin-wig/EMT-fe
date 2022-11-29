@@ -307,11 +307,6 @@ const ComparisonBox = ({
   );
 
   useEffect(() => {
-    const selectedCompanies = formik.getFieldProps('companyIds').value;
-    setVesselList(vessels.filter((vessel) => Array.isArray(selectedCompanies) ? selectedCompanies?.includes(vessel.companyId) : selectedCompanies === vessel.companyId));
-  }, [vessels, formik.getFieldProps('companyIds').value]);
-
-  useEffect(() => {
     setFleetList(fleets);
   }, [fleets]);
 
@@ -344,7 +339,7 @@ const ComparisonBox = ({
     const fleets = state.fleets?.filter((fleet) => !!fleet);
     const selectedVesselsList = vessels
       .filter((vessel) => !state.companyIds || (Array.isArray(state.companyIds) ? (!state.companyIds.length || state.companyIds.includes(vessel.companyId)) : state.companyIds === vessel.companyId))
-      .filter((vessel) => fleets || fleets.length || fleets.includes(vessel?.fleet?.id))
+      .filter((vessel) => (!fleets || !fleets.length) || (fleets && fleets.length && fleets.includes(vessel?.fleet?.id)))
       .filter((vessel) => !state.vesselType || vessel.vesselTypeId === +state.vesselType)
       .filter((vessel, index) => {
         if (state.vesselAge) {
@@ -357,7 +352,7 @@ const ComparisonBox = ({
             maxYear = 10000;
           }
 
-          return dateDiff > minYear * oneYearMilli && dateDiff > maxYear * oneYearMilli;
+          return dateDiff >= minYear * oneYearMilli && dateDiff <= maxYear * oneYearMilli;
         }
 
         return true;
@@ -659,11 +654,11 @@ const ComparisonBox = ({
     } else {
       e.target.value = value.filter((val) => val);
     }
-    setFilter(!filter);
-    const filteredVessels = vessels.filter(vessel => e.target.value.includes(vessel?.fleet?.id));
-    setVesselList(filteredVessels);
+    const filteredVessels = vesselList?.filter(vessel => e.target.value.includes(vessel?.fleet?.id));
     formik.setFieldValue('vesselIds', filteredVessels.map((vessel) => vessel.id));
     formik.getFieldProps('fleets').onChange(e);
+
+    setFilter(!filter);
   };
 
   const handleChangeYear = (value) => {
@@ -694,14 +689,13 @@ const ComparisonBox = ({
     } else {
       setIMOAverageMode(false);
     }
-    setFilter(!filter);
 
-    handleChangeCompanyIds(selectedValues);
     formik.setFieldValue(
       'vesselIds',
       vessels?.map((vessel) => vessel?.id) || [],
     );
     formik.getFieldProps('companyIds').onChange(e);
+    handleChangeCompanyIds(selectedValues);
   };
 
   return (
