@@ -278,6 +278,7 @@ const UserDetail = ({ match }) => {
                       optionLabel="name"
                       optionValue="id"
                       {...formik.getFieldProps('companyId')}
+                      error={formik.touched.companyId && formik.errors.companyId}
                       disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN}
                     />
                   </Box>
@@ -291,6 +292,7 @@ const UserDetail = ({ match }) => {
                     optionValue="id"
                     disabled={!isEditEnable || isProfilePage}
                     {...formik.getFieldProps('userRole')}
+                    error={formik.touched.userRole && formik.errors.userRole}
                   />
                 </Box>
                 {isEditEnable && (

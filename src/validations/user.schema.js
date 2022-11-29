@@ -8,7 +8,7 @@ export const userSchema = Yup.object().shape({
   email: Yup.string()
     .email('Check the format of the email you entered')
     .required('Email is required'),
-  company: Yup.number()
+  companyId: Yup.number()
     .required('Company is required'),
   userRole: Yup.number()
     .required('User role is required'),
