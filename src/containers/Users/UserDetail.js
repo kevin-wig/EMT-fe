@@ -106,7 +106,7 @@ const UserDetail = ({ match }) => {
   const { getUser, roles, getRoles, updateUser, removeUser, createUser, loading, requestChangePassword } = useUser();
   const [currentUser, setCurrentUser] = useState();
   const history = useHistory();
-  const visibleRoles = (roles || []).filter((role) => me.userRole?.role === SUPER_ADMIN || role.role !== SUPER_ADMIN);
+  const visibleRoles = (roles || []).filter((role) => role.role !== SUPER_ADMIN);
 
   const isProfilePage = useMemo(() => {
     return match?.path === '/profile';
@@ -278,6 +278,7 @@ const UserDetail = ({ match }) => {
                       optionLabel="name"
                       optionValue="id"
                       {...formik.getFieldProps('companyId')}
+                      error={formik.touched.companyId && formik.errors.companyId}
                       disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN}
                     />
                   </Box>
@@ -291,6 +292,7 @@ const UserDetail = ({ match }) => {
                     optionValue="id"
                     disabled={!isEditEnable || isProfilePage}
                     {...formik.getFieldProps('userRole')}
+                    error={formik.touched.userRole && formik.errors.userRole}
                   />
                 </Box>
                 {isEditEnable && (
