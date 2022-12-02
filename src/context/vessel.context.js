@@ -25,6 +25,7 @@ function VesselProvider(props) {
   const [fuels, setFuels] = useState([]);
   const [reportOptions, setReportOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const handleSuccess = (res) => {
     setLoading(false);
@@ -42,10 +43,10 @@ function VesselProvider(props) {
       .getVessels(params)
       .then(handleSuccess)
       .then((res) => {
-        if(params !== -1 && params !== undefined){
+        if (params !== -1 && params !== undefined) {
           const filtered = res.data.filter(a => {
             return a.companyId === params;
-          }); 
+          });
           setVessels(filtered);
           return res;
         }
@@ -158,7 +159,7 @@ function VesselProvider(props) {
   const getVesselStackChartPerVoyage = useCallback(async (id, fromDate, toDate) => {
     setLoading(true);
     return VesselsService
-      .getVesselStackChartPerVoyage({id, fromDate, toDate})
+      .getVesselStackChartPerVoyage({ id, fromDate, toDate })
       .then(handleSuccess)
       .catch(handleError);
   }, []);
@@ -248,9 +249,9 @@ function VesselProvider(props) {
       .catch(handleError);
   }, [getVessels]);
 
-  const createVesselTrip = useCallback(async (data,aggregate) => {
+  const createVesselTrip = useCallback(async (data, aggregate) => {
     setLoading(true);
-    return await VesselsService.createVesselTrip(data,aggregate)
+    return await VesselsService.createVesselTrip(data, aggregate)
       .then(handleSuccess)
       .catch(handleError);
   }, []);
@@ -293,7 +294,7 @@ function VesselProvider(props) {
     return await VesselsService.getVesselTypes()
       .then(handleSuccess)
       .then((res) => {
-        setVesselTypes(res.data.filter((a) => a.id !== 4))
+        setVesselTypes(res.data.filter((a) => a.id !== 4));
       })
       .catch((err) => {
         setVesselTypes([]);
@@ -424,7 +425,7 @@ function VesselProvider(props) {
 
   const updateReportedOptions = (id, option) => {
     setReportOptions(
-      reportOptions.map((reportOption) => reportOption.id === id ? { id, ...option } : reportOption)
+      reportOptions.map((reportOption) => reportOption.id === id ? { id, ...option } : reportOption),
     );
   };
 
@@ -433,7 +434,7 @@ function VesselProvider(props) {
       updateReportedOptions(id, option);
     } else {
       setReportOptions(
-        [ ...reportOptions, { id, ...option }]
+        [...reportOptions, { id, ...option }],
       );
     }
   };
@@ -441,7 +442,7 @@ function VesselProvider(props) {
   const removeReportedOptions = (id) => {
     if (reportOptions.find((reportOption) => reportOption.id === id)) {
       setReportOptions(
-        reportOptions.filter((reportOption) => reportOption.id !== id)
+        reportOptions.filter((reportOption) => reportOption.id !== id),
       );
     }
   };
@@ -509,6 +510,9 @@ function VesselProvider(props) {
         removeVesselTrip,
         exportVoyageAsExcel,
         exportVoyageAsPdf,
+
+        selectedYear,
+        setSelectedYear,
       }}
       {...props}
     />
