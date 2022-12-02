@@ -152,6 +152,8 @@ const Voyage = () => {
     getVoyageETSEuaPercentChart,
     getVesselFuelChartPerVoyage,
     createVesselTrips,
+    selectedYear,
+    setSelectedYear,
   } = useVessel();
   const { notify } = useSnackbar();
   const { companies, getCompanies, filterCompany } = useCompany();
@@ -188,7 +190,6 @@ const Voyage = () => {
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
-  const [year, setYear] = useState(new Date().getFullYear());
   const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
@@ -196,10 +197,10 @@ const Voyage = () => {
       journeyType: selectedTab,
       ...(+vesselId !== -1 && { vesselId }),
       ...(+companyId !== -1 && { companyId }),
-      fromDate: year === 'no_year' ? fromDate?.toISOString() : moment(year, 'year').startOf('year').toISOString(),
-      toDate: year === 'no_year' ? toDate?.toISOString() : moment(year, 'year').endOf('year').toISOString(),
+      fromDate: selectedYear === 'no_year' ? fromDate?.toISOString() : moment(selectedYear, 'year').startOf('year').toISOString(),
+      toDate: selectedYear === 'no_year' ? toDate?.toISOString() : moment(selectedYear, 'year').endOf('year').toISOString(),
     }),
-    [voyageType, selectedTab, vesselId, companyId, fromDate, toDate, year],
+    [voyageType, selectedTab, vesselId, companyId, fromDate, toDate, selectedYear],
   );
 
   const getCIIData = useCallback(
@@ -842,7 +843,7 @@ const Voyage = () => {
   };
 
   const handleChangeYear = (e) => {
-    setYear(e.target.value);
+    setSelectedYear(e.target.value);
   };
 
   return (
@@ -905,7 +906,7 @@ const Voyage = () => {
           placeholder="Select Date from"
           value={fromDate}
           onChange={setFromDate}
-          disabled={year !== 'no_year'}
+          disabled={selectedYear !== 'no_year'}
         />
         <CommonDatePicker
           className={classes.filter}
@@ -913,14 +914,14 @@ const Voyage = () => {
           placeholder="Select Date to"
           value={toDate}
           onChange={setToDate}
-          disabled={year !== 'no_year'}
+          disabled={selectedYear !== 'no_year'}
         />
         <CommonSelect
           className={classes.filter}
           options={[{ id: 'no_year', label: 'Select Year' }, ...YEARS_OPTION]}
           optionLabel="label"
           optionValue="id"
-          value={year}
+          value={selectedYear}
           onChange={handleChangeYear}
         />
         <CommonMenu
