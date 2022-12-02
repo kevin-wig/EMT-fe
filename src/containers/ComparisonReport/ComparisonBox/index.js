@@ -194,7 +194,7 @@ const ComparisonBox = ({
       fleets: [''],
       vesselAge: '',
       vesselWeight: [0, 0],
-      dwt: ['', ''],
+      dwt: '',
       vesselType: '',
     },
     validationSchema: reportSchema,
@@ -337,6 +337,7 @@ const ComparisonBox = ({
   useEffect(() => {
     const state = formik.values;
     const fleets = state.fleets?.filter((fleet) => !!fleet);
+
     const selectedVesselsList = vessels
       .filter((vessel) => !state.companyIds || (Array.isArray(state.companyIds) ? (!state.companyIds.length || state.companyIds.includes(vessel.companyId)) : state.companyIds === vessel.companyId))
       .filter((vessel) => (!fleets || !fleets.length) || (fleets && fleets.length && fleets.includes(vessel?.fleet?.id)))
@@ -355,6 +356,10 @@ const ComparisonBox = ({
           return dateDiff >= minYear * oneYearMilli && dateDiff <= maxYear * oneYearMilli;
         }
 
+        if (state.dwt !== '' && state.dwt >= 0) {
+          const splittedOption = selectedDWTList[state.dwt].label.split(/[-|+]/g);
+          return splittedOption[1] === '' ? vessel.dwt >= +splittedOption[0] : _.inRange(vessel.dwt, +splittedOption[0], +splittedOption[1]);
+        }
         return true;
       });
 
@@ -366,7 +371,7 @@ const ComparisonBox = ({
     formik.setFieldValue('vesselIds', state.vesselIds.filter((vesselId) => selectedVesselsList.find(({ id }) => id === vesselId)));
     setVesselList(selectedVesselsList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filter, vessels]);
+  }, [filter, vessels, selectedDWTList]);
 
   const generateChartData = (chartData, reportType) => {
     if (reportType === REPORT_TYPE_ENUM.CII) {
@@ -634,6 +639,7 @@ const ComparisonBox = ({
 
   const handleVesselDWTChange = (e) => {
     const vesselDWT = e.target.value;
+    setFilter(!filter);
 
     formik.setFieldValue('dwt', vesselDWT);
   };
