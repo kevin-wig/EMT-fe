@@ -222,7 +222,11 @@ const VoyageDetail = ({ match }) => {
               })
               .catch((err) => {
                 if (err?.response?.data) {
-                  notify(err.response.data.message, 'error');
+                  if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
+                    notify(Object.values(err.response.data.errors)[0][0], 'error');
+                  } else {
+                    notify(err.response.data.message, 'error');
+                  }
                   setDisable(false);
                 }
               });
@@ -234,7 +238,11 @@ const VoyageDetail = ({ match }) => {
               })
               .catch((err) => {
                 if (err?.response?.data) {
-                  notify(err.response.data.message, 'error');
+                  if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
+                    notify(Object.values(err.response.data.errors)[0][0], 'error');
+                  } else {
+                    notify(err.response.data.message, 'error');
+                  }
                   setDisable(false);
                 }
               });
@@ -249,7 +257,11 @@ const VoyageDetail = ({ match }) => {
             })
             .catch((err) => {
               if (err?.response?.data) {
-                notify(err.response.data.message, 'error');
+                if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
+                  notify(Object.values(err.response.data.errors)[0][0], 'error');
+                } else {
+                  notify(err.response.data.message, 'error');
+                }
                 setDisable(false);
               }
             });
@@ -261,7 +273,11 @@ const VoyageDetail = ({ match }) => {
             })
             .catch((err) => {
               if (err?.response?.data) {
-                notify(err.response.data.message, 'error');
+                if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
+                  notify(Object.values(err.response.data.errors)[0][0], 'error');
+                } else {
+                  notify(err.response.data.message, 'error');
+                }
                 setDisable(false);
               }
             });
