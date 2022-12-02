@@ -40,7 +40,7 @@ export async function createUser(user) {
 
 export async function updateUser(id, user) {
   return apiClient
-    .patch(`users/${id}`, user)
+    .put(`users/${id}`, user)
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }

@@ -106,7 +106,7 @@ const UserDetail = ({ match }) => {
   const { getUser, roles, getRoles, updateUser, removeUser, createUser, loading, requestChangePassword } = useUser();
   const [currentUser, setCurrentUser] = useState();
   const history = useHistory();
-  const visibleRoles = (roles || []).filter((role) => role.role !== SUPER_ADMIN);
+  const visibleRoles = (roles || []).filter((role) => me.userRole?.role === SUPER_ADMIN || role.role !== SUPER_ADMIN);
 
   const isProfilePage = useMemo(() => {
     return match?.path === '/profile';
@@ -126,7 +126,7 @@ const UserDetail = ({ match }) => {
       firstname: '',
       lastname: '',
       email: '',
-      companyId: '',
+      companyId: undefined,
       userRole: '',
       isActive: false,
     },
@@ -150,7 +150,7 @@ const UserDetail = ({ match }) => {
 
   useEffect(() => {
     if (selectedRole === SUPER_ADMIN) {
-      formik.setFieldValue('companyId', '');
+      formik.setFieldValue('companyId', undefined);
     }
   }, [selectedRole]);
 
@@ -176,7 +176,7 @@ const UserDetail = ({ match }) => {
         setCurrentUser(user);
         formik.setValues({
           ...pick(user, ['firstname', 'lastname', 'email', 'isActive']),
-          companyId: user?.companyId || '',
+          companyId: user?.companyId || undefined,
           userRole: user.userRole?.id || '',
         });
       });
@@ -269,20 +269,6 @@ const UserDetail = ({ match }) => {
                     </Box>
                   )}
                 </Box>
-                {selectedRole !== SUPER_ADMIN && (
-                  <Box className={classes.wrapper}>
-                    <Typography component="p">Company</Typography>
-                    <CommonSelect
-                      className={classes.input}
-                      options={isEditEnable ? (companies?.length > 0 ? companies : tempCompanyOption) : tempCompanyOption}
-                      optionLabel="name"
-                      optionValue="id"
-                      {...formik.getFieldProps('companyId')}
-                      error={formik.touched.companyId && formik.errors.companyId}
-                      disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN}
-                    />
-                  </Box>
-                )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Role</Typography>
                   <CommonSelect
@@ -295,6 +281,20 @@ const UserDetail = ({ match }) => {
                     error={formik.touched.userRole && formik.errors.userRole}
                   />
                 </Box>
+                {selectedRole !== SUPER_ADMIN && (
+                  <Box className={classes.wrapper}>
+                    <Typography component="p">Company</Typography>
+                    <CommonSelect
+                      className={classes.input}
+                      options={isEditEnable ? (companies?.length > 0 ? companies : tempCompanyOption) : tempCompanyOption}
+                      optionLabel="name"
+                      optionValue="id"
+                      {...formik.getFieldProps('companyId')}
+                      error={formik.touched.companyId && formik.errors.companyId}
+                      disabled={!isEditEnable || me.userRole?.role !== SUPER_ADMIN || selectedRole === SUPER_ADMIN}
+                    />
+                  </Box>
+                )}
                 {isEditEnable && (
                   <Box className={classes.checkWrapper}>
                     <Typography component="p" className={classes.label}>Active</Typography>
