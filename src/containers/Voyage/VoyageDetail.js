@@ -25,6 +25,7 @@ import {
 import moment from 'moment';
 import { useAuth } from '../../context/auth.context';
 import { SUPER_ADMIN } from '../../constants/UserRoles';
+import { useCompany } from '../../context/company.context';
 
 const PREFIX = 'voyage-detail';
 const classes = {
@@ -111,6 +112,7 @@ const VoyageDetail = ({ match }) => {
     removeVesselTrip,
     getEtsPerVoyage,
   } = useVessel();
+  const { filterCompany } = useCompany();
   const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
 
   const history = useHistory();
@@ -135,8 +137,11 @@ const VoyageDetail = ({ match }) => {
   }, [getVessels, getPorts]);
 
   useEffect(() => {
-    setVesselsList(isSuperAdmin ? vessels : vessels.filter((vessel) => vessel.companyId === me?.companyId));
-  }, [vessels, isSuperAdmin]);
+    setVesselsList(isSuperAdmin
+      ? vessels.filter((vessel) => vessel.companyId === filterCompany)
+      : vessels.filter((vessel) => vessel.companyId === me?.companyId)
+    );
+  }, [vessels, filterCompany, isSuperAdmin]);
 
   const formik = useFormik({
     initialValues: {
