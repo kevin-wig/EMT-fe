@@ -833,7 +833,7 @@ const Voyage = () => {
       })
       .catch((err) => {
         if (err?.response?.data) {
-          if (err?.response?.data?.errors.vesselTrips[0]) {
+          if (err?.response?.data?.errors?.vesselTrips?.[0]) {
             notify(Object.values(err.response.data.errors.vesselTrips[0])[0][0], 'error');
           } else {
             notify(err.response.data.message, 'error');
