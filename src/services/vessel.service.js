@@ -38,7 +38,7 @@ export async function createVessels(vessel) {
 
 export async function createVesselTrips(data) {
   return apiClient
-    .post(`vessel-trips`, data)
+    .post(`vessel-trips`, { vesselTrips: data })
     .then((res) => res.data)
     .catch((err) => Promise.reject(err));
 }

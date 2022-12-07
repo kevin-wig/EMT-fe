@@ -825,7 +825,7 @@ const Voyage = () => {
 
     setIsImporting(true);
 
-    createVesselTrips(data)
+    createVesselTrips(Object.values(data))
       .then(() => {
         notify('Created successfully!');
         setFiles([]);
@@ -834,7 +834,11 @@ const Voyage = () => {
       })
       .catch((err) => {
         if (err?.response?.data) {
-          notify(err.response.data.message, 'error');
+          if (err?.response?.data?.errors?.vesselTrips?.[0]) {
+            notify(Object.values(err.response.data.errors.vesselTrips[0])[0][0], 'error');
+          } else {
+            notify(err.response.data.message, 'error');
+          }
         }
       })
       .finally(() => {
