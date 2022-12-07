@@ -19,7 +19,6 @@ import {
 } from '../constants';
 import { YEARS_OPTION } from '../../../constants/Global';
 import { useVessel } from '../../../context/vessel.context';
-import { FUEL_TYPES_OPTIONS } from '../../../constants/FuelTypes';
 import { newColor } from '../../../constants/ChartColors';
 import { reportSchema } from '../../../validations/report.schema';
 import { genYearArray } from '../../../utils/yearArray';
@@ -189,7 +188,6 @@ const ComparisonBox = ({
     initialValues: {
       reportType: '',
       companyIds: admin ? [] : me?.company?.id || '',
-      fuelType: [],
       vesselIds: [],
       fleets: [''],
       vesselAge: '',
@@ -204,7 +202,6 @@ const ComparisonBox = ({
         ...values,
         companyIds: admin ? values?.companyIds.filter((companyId) => companyId) : companyIds,
         fleets: values?.fleets.filter((fleet) => fleet),
-        fuelType: values?.fuelType.filter((fuelType) => fuelType),
         vesselIds: values?.vesselIds.filter((vesselId) => vesselId),
         dwt: values?.vesselType && values?.dwt && VESSEL_DWT.find(dwt => dwt.id === values?.vesselType)?.values[values?.dwt]?.split(/[-|+]/g).map(v => Number(v)),
       };
@@ -528,7 +525,7 @@ const ComparisonBox = ({
     }
   };
 
-  const getParameters = ({ fuelType, ...values }) => {
+  const getParameters = ({ ...values }) => {
     const reportOpt = Object.entries(values).reduce((obj, value) => {
       if (value[1]) {
         if (Array.isArray(value[1]) && value[1].length === 2) {
@@ -559,7 +556,6 @@ const ComparisonBox = ({
       reportOpt.companyIds = companies.map(company => company?.id);
     }
 
-    reportOpt.fuels = fuelType ? Array.isArray(fuelType) ? [...fuelType] : [fuelType] : [];
     reportOpt.year = year;
 
     return reportOpt;
@@ -595,12 +591,6 @@ const ComparisonBox = ({
     formik.setFieldValue('vesselAge', vesselAge);
     setFilter(!filter);
   };
-
-  const handleOnFuelTypesChange = (e) => {
-    setChangedPayload(!changedPayload);
-    const fuelTypes = e.target.value.includes('') ? FUEL_TYPES_OPTIONS.map((fuelType) => fuelType.key) : e.target.value;
-    formik.setFieldValue('fuelType', fuelTypes);
-  }
 
   const handleOnVesselChange = (e) => {
     setChangedPayload(!changedPayload);
@@ -763,23 +753,6 @@ const ComparisonBox = ({
                     disabled={imoAverageMode || companyIds === 'other_companies'}
                     onChange={handleChangeFleets}
                     clearable
-                  />
-                </Box>
-              </Grid>
-              <Grid item xs={6} md={6}>
-                <Box className={classes.wrapper}>
-                  <Typography component="p">Fuel Type</Typography>
-                  <CommonSelect
-                    multiple
-                    className={classes.input}
-                    options={FUEL_TYPES_OPTIONS}
-                    placeholder="All fuel type"
-                    optionLabel="label"
-                    optionValue="key"
-                    disabled={imoAverageMode}
-                    {...formik.getFieldProps('fuelType')}
-                    clearable
-                    onChange={handleOnFuelTypesChange}
                   />
                 </Box>
               </Grid>
