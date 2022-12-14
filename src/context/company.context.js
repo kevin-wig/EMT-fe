@@ -10,7 +10,7 @@ const CompanyContext = React.createContext({});
  */
 function CompanyProvider(props) {
   const [company, setCompany] = useState();
-  const [filterCompany, setFilterCompany] = useState();
+  const [filterCompany, setFilterCompany] = useState(0);
   const [companies, setCompanies] = useState();
   const [totalCount, setTotalCount] = useState(0);
   const [pagination, setPagination] = useState({
