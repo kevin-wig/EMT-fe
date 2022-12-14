@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useFormik } from 'formik';
 import { styled } from '@mui/material/styles';
@@ -112,11 +112,20 @@ const VoyageDetail = ({ match }) => {
     removeVesselTrip,
     getEtsPerVoyage,
   } = useVessel();
-  const { filterCompany } = useCompany();
+  const { companies, getCompanies, filterCompany } = useCompany();
   const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
+
+  const companyFilters = useMemo(() => {
+    if (companies?.length > 0) {
+      companies.sort((a, b) => a.name.localeCompare(b.name));
+      return companies;
+    }
+    return [];
+  }, [companies]);
 
   const history = useHistory();
 
+  const [companyId, setCompanyId] = useState(filterCompany);
   const [vesselsList, setVesselsList] = useState();
   const [deletingVoyage, setDeletingVoyage] = useState();
   const [importVoyageOption, setImportVoyageOption] = useState(
@@ -134,14 +143,17 @@ const VoyageDetail = ({ match }) => {
   useEffect(() => {
     getVessels();
     getPorts();
-  }, [getVessels, getPorts]);
+    if (isSuperAdmin) {
+      getCompanies();
+    }
+  }, [getVessels, getPorts, isSuperAdmin]);
 
   useEffect(() => {
     setVesselsList(isSuperAdmin
-      ? vessels.filter((vessel) => vessel.companyId === filterCompany)
+      ? vessels.filter((vessel) => vessel.companyId === companyId)
       : vessels.filter((vessel) => vessel.companyId === me?.companyId)
     );
-  }, [vessels, filterCompany, isSuperAdmin]);
+  }, [vessels, companyId, isSuperAdmin]);
 
   const formik = useFormik({
     initialValues: {
@@ -477,6 +489,10 @@ const VoyageDetail = ({ match }) => {
     formik.setFieldValue('toDate', value);
   };
 
+  const handleFilterByCompany = (e) => {
+    setCompanyId(e.target.value);
+  };
+
   return (
     <Root className={classes.root}>
       <Box className={classes.title}>
@@ -528,6 +544,21 @@ const VoyageDetail = ({ match }) => {
                   />
                 </Box>
               </Grid>
+              {isSuperAdmin && (
+                <Grid item xs={12} md={12}>
+                  <Box className={classes.wrapper}>
+                    <Typography component="p">Company</Typography>
+                    <CommonSelect
+                      className={classes.input}
+                      options={companyFilters}
+                      optionLabel="name"
+                      optionValue="id"
+                      value={companyId}
+                      onChange={handleFilterByCompany}
+                    />
+                  </Box>
+                </Grid>
+              )}
               <Grid item xs={12} md={12}>
                 <Box className={classes.wrapper}>
                   <Typography component="p">Vessel</Typography>
