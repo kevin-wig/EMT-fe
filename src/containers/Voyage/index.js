@@ -156,12 +156,11 @@ const Voyage = () => {
     setSelectedYear,
   } = useVessel();
   const { notify } = useSnackbar();
-  const { companies, getCompanies, filterCompany } = useCompany();
+  const { companies, getCompanies, filterCompany, setFilterCompany } = useCompany();
 
   const history = useHistory();
 
   const [selectedTab, setSelectedTab] = useState(JOURNEY_OPTION.CII);
-  const [companyId, setCompanyId] = useState(-1);
   const [vesselId, setVesselId] = useState(-1);
   const [trips, setTrips] = useState([]);
   const [page, setPage] = useState(1);
@@ -186,21 +185,21 @@ const Voyage = () => {
   const [etsChartPerVoyage, setEtsChartPerVoyage] = useState();
   const [fuelChartData, setFuelChartData] = useState([]);
   const [euaPercentChart, setEuaPercentChart] = useState();
-  const [voyageType, setVoyageType] = useState('VISIABLE');
+  const [voyageType, setVoyageType] = useState('VISIBLE');
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
   const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
-      voyageType: voyageType === 'VISIABLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
+      voyageType: voyageType === 'VISIBLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
       journeyType: selectedTab,
       ...(+vesselId !== -1 && { vesselId }),
-      ...(+companyId !== -1 && { companyId }),
+      ...(+filterCompany !== 0 && { companyId: filterCompany }),
       fromDate: selectedYear === 'no_year' ? fromDate?.toISOString() : moment(selectedYear, 'year').startOf('year').toISOString(),
       toDate: selectedYear === 'no_year' ? toDate?.toISOString() : moment(selectedYear, 'year').endOf('year').toISOString(),
     }),
-    [voyageType, selectedTab, vesselId, companyId, fromDate, toDate, selectedYear],
+    [voyageType, selectedTab, vesselId, filterCompany, fromDate, toDate, selectedYear],
   );
 
   const getCIIData = useCallback(
@@ -221,13 +220,13 @@ const Voyage = () => {
       getVesselFuelChartPerVoyage(filterVesselId, {
         fromDate: filterParams.fromDate,
         toDate: filterParams.toDate,
-        ...((!filterVesselId && companyId > 0) ? { companyId } : {}),
+        ...((!filterVesselId && filterCompany > 0) ? { companyId: filterCompany } : {}),
       }).then((res) => {
         setFuelChartData(res.data);
       });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getVoyageCIIChart, vesselId, companyId],
+    [getVoyageCIIChart, vesselId, filterCompany],
   );
 
   const getETSData = useCallback(
@@ -247,7 +246,7 @@ const Voyage = () => {
   );
 
   const companyFilters = useMemo(() => {
-    const all = { name: 'All companies', id: -1 };
+    const all = { name: 'All companies', id: 0 };
     if (companies?.length > 0) {
       companies.sort((a, b) => a.name.localeCompare(b.name));
       return [all, ...companies];
@@ -266,8 +265,8 @@ const Voyage = () => {
         filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === me?.companyId);
       }
 
-      if (companyId) {
-        filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === companyId);
+      if (filterCompany) {
+        filteredVessels = filteredVessels.filter((vessel) => vessel.companyId === filterCompany);
       }
 
       if (history.location.state) {
@@ -279,7 +278,7 @@ const Voyage = () => {
     } else {
       return [all];
     }
-  }, [vessels, companyId]);
+  }, [vessels, filterCompany]);
 
   const fetchVesselTripsList = useCallback(() => {
     getTrips({ ...filterParams, ...paginationParams })
@@ -299,13 +298,9 @@ const Voyage = () => {
 
   useEffect(() => {
     if (me?.userRole?.role === SUPER_ADMIN) {
-      getCompanies().then(() => {
-        if (filterCompany) {
-          setCompanyId(filterCompany);
-        }
-      });
+      getCompanies();
     } else {
-      setCompanyId(me?.companyId);
+      setFilterCompany(me?.companyId);
     }
 
     getVessels(-1);
@@ -780,7 +775,7 @@ const Voyage = () => {
   const handleFilterByCompany = (e) => {
     const companyId = e.target.value;
     getVessels(companyId);
-    setCompanyId(e.target.value);
+    setFilterCompany(companyId);
   };
 
   const handleDelete = (id) => {
@@ -876,7 +871,7 @@ const Voyage = () => {
             options={companyFilters}
             optionLabel="name"
             optionValue="id"
-            value={companyId}
+            value={filterCompany}
             onChange={handleFilterByCompany}
           />
         )}
@@ -893,7 +888,7 @@ const Voyage = () => {
         <CommonSelect
           className={classes.filter}
           options={[
-            { name: 'Select Type', value: 'VISIABLE' },
+            { name: 'Select Type', value: 'VISIBLE' },
             { name: 'Actual', value: 'ACTUAL' },
             { name: 'Predicted', value: 'PREDICTED' },
             { name: 'Archived', value: 'ARCHIVED' },

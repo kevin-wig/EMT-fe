@@ -80,7 +80,7 @@ const Dashboard = () => {
   const [vesselType, setVesselType] = useState();
   const [vesselTypesList, setVesselTypesList] = useState([]);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  /*const [type, setType] = useState("VISIABLE");
+  /*const [type, setType] = useState("VISIBLE");
   const [voyageType, setVoyageType] = useState(["PREDICTED", "ACTUAL"]);*/
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const Dashboard = () => {
 
   /*
   const changeType = (type) => {
-    setVoyageType(type === "VISIABLE"
+    setVoyageType(type === "VISIBLE"
       ? ["PREDICTED", "ACTUAL"]
       : [voyageType]
     )
@@ -197,7 +197,7 @@ const Dashboard = () => {
           {/* <CommonSelect
             className={classes.menu}
             options={[
-              { name: "Select Type", value: "VISIABLE" },
+              { name: "Select Type", value: "VISIBLE" },
               { name: "Actual", value: "ACTUAL" },
               { name: "Predicted", value: "PREDICTED" },
               { name: "Archived", value: "ARCHIVED" },
