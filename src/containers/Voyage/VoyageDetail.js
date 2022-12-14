@@ -303,6 +303,13 @@ const VoyageDetail = ({ match }) => {
     },
   });
 
+  useEffect(() => {
+    const vesselId = formik.getFieldProps('vessel').value;
+    if (vesselsList && vesselsList.length && !vesselsList.find((vessel) => +vessel.id === +vesselId)) {
+      formik.setFieldValue('vessel', vesselsList[0].id);
+    }
+  }, [vesselsList]);
+
   const FormatNumber = (value) => {
     if (!isNaN(parseFloat(value)) && !isNaN(value - 0)) {
       return parseFloat(value)?.toFixed(3);
