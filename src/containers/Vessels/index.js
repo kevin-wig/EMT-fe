@@ -152,35 +152,33 @@ const Vessel = () => {
       title: 'Fleet',
       key: 'fleet',
       sortable: true,
-      render: (data) => <>{data.emissions ?? 'N/A'}</>,
+      render: (data) => <>{data.fleet ? data.fleet : 'N/A'}</>,
     },
     {
       title: `CO2 Emissions (${selectedYear})`,
       key: 'emissions',
       sortable: true,
       fixed: true,
-      render: (data) => <>{data.emissions ?? 'N/A'}</>,
+      render: (data) => <>{data.emissions !== null ? parseFloat(data.emissions).toFixed(3) : 'N/A'}</>,
     },
     {
       title: `CII Attained (${selectedYear})`,
       key: 'cii',
       sortable: true,
       fixed: true,
-      render: (data) => <>{data.emissions ?? 'N/A'}</>,
+      render: (data) => <>{data.cii !== null ? parseFloat(data.cii).toFixed(3) : 'N/A'}</>,
     },
     {
       title: `CII Required (${selectedYear})`,
       key: 'requiredCII',
       sortable: true,
       fixed: true,
-      render: (data) => <>{data.emissions ?? 'N/A'}</>,
+      render: (data) => <>{data.requiredCII !== null ? parseFloat(data.requiredCII).toFixed(3) : 'N/A'}</>,
     },
     {
       title: 'Bunker cost',
       key: 'bunkerCost',
-      render: (data) => (
-        <>{data.bunkerCost ? parseFloat(data.bunkerCost)?.toFixed(3) : 'N/A'}</>
-      ),
+      render: (data) => <>{data.bunkerCost !== null ? parseFloat(data.bunkerCost)?.toFixed(3) : 'N/A'}</>,
     },
     {
       title: 'Category',
