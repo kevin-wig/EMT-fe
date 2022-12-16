@@ -152,27 +152,28 @@ const Vessel = () => {
       title: 'Fleet',
       key: 'fleet',
       sortable: true,
-      render: (data) => (
-        <>{data.fleet ? data.fleet : 'N/A'}</>
-      ),
+      render: (data) => <>{data.emissions ?? 'N/A'}</>,
     },
     {
       title: `CO2 Emissions (${selectedYear})`,
       key: 'emissions',
       sortable: true,
       fixed: true,
+      render: (data) => <>{data.emissions ?? 'N/A'}</>,
     },
     {
       title: `CII Attained (${selectedYear})`,
       key: 'cii',
       sortable: true,
       fixed: true,
+      render: (data) => <>{data.emissions ?? 'N/A'}</>,
     },
     {
       title: `CII Required (${selectedYear})`,
       key: 'requiredCII',
       sortable: true,
       fixed: true,
+      render: (data) => <>{data.emissions ?? 'N/A'}</>,
     },
     {
       title: 'Bunker cost',
