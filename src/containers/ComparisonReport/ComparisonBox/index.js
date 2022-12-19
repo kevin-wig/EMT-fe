@@ -227,12 +227,12 @@ const ComparisonBox = ({
               dt.imoValue = foundImo ? +foundImo?.imoValue : 0;
             });
           });
-          let dwtSelected = VESSEL_DWT.find(el => el.id === options.vesselType)?.values[formik.values.dwt];
+          const dwtSelected = VESSEL_DWT.find(el => el.id === options.vesselType)?.values[formik.values.dwt];
 
           if (dwtSelected) {
-            let filteredDwt = found[0].values.filter(el => {
-              let dwtRange = el.dwt.split(/[+|-]/g).map(value => +value);
-              let dwtSelectedRange = dwtSelected.split(/[+|-]/g).map(value => +value);
+            const filteredDwt = found[0].values.filter(el => {
+              const dwtRange = el.dwt.split(/[+|-]/g).map(value => +value);
+              const dwtSelectedRange = dwtSelected.split(/[+|-]/g).map(value => +value);
 
               return dwtRange[1] > 0 ? _.inRange(dwtSelectedRange[0], dwtRange[0], dwtRange[1]) || _.inRange(dwtSelectedRange[1], dwtRange[0], dwtRange[1]) : (dwtSelectedRange[0] >= dwtRange[0] && dwtSelectedRange[1] <= dwtRange[0]);
             });
@@ -570,9 +570,9 @@ const ComparisonBox = ({
     formik.setFieldValue('vesselType', vesselTypeId);
 
     type !== 'vessel' && setFilter(!filter);
-    let vesselType = vesselTypes.find(_vesselType => _vesselType.id === vesselTypeId)?.name;
-    let dwtList = VESSEL_DWT.find(dwt => dwt.type === vesselType)?.values;
-    let dwtUIList = dwtList?.map((dwt, i) => ({ key: i, label: dwt }));
+    const vesselType = vesselTypes.find(_vesselType => _vesselType.id === vesselTypeId)?.name;
+    const dwtList = VESSEL_DWT.find(dwt => dwt.type === vesselType)?.values;
+    const dwtUIList = dwtList?.map((dwt, i) => ({ key: i, label: dwt }));
     setSelectedDWTList(dwtUIList);
 
     if (callback) {
@@ -622,7 +622,7 @@ const ComparisonBox = ({
       });
     } else {
       formik.setFieldValue('vesselAge', '');
-      formik.setFieldValue('dwt', []);
+      formik.setFieldValue('dwt', '');
       formik.setFieldValue('vesselType', '');
     }
   };
