@@ -98,7 +98,9 @@ const CreateFleet = () => {
     },
     validationSchema: fleetSchema,
     onSubmit: async (values) => {
-      values.company = me.companyId;
+      if (!isSuperAdmin && me.companyId) {
+        values.company = me.companyId;
+      }
       createFleet(values)
         .then(() => {
           notify('Created successfully!');
@@ -127,7 +129,7 @@ const CreateFleet = () => {
   }, []);
 
   useEffect(() => {
-    if (!isSuperAdmin) {
+    if (!isSuperAdmin && me.companyId) {
       formik.setFieldValue('company', me.companyId);
     }
   }, [isSuperAdmin, me]);
