@@ -588,6 +588,7 @@ const ComparisonBox = ({
 
   const handleVesselTypeChange = (e) => {
     const vesselType = e.target.value;
+    formik.setFieldValue('dwt', '');
 
     modifyParamtersTiedToVesselType(vesselType);
   };
