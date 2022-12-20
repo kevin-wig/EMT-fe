@@ -111,6 +111,7 @@ const FleetDetail = ({ match = { params: {} } }) => {
   const { getFleet, updateFleet, createFleet, removeFleet, createFleetVessel, loading } = useFleet();
   const { getVessels, getVesselsList } = useVessel();
   const { notify } = useSnackbar();
+  const isSuperAdmin = me?.userRole?.role === SUPER_ADMIN;
 
   const history = useHistory();
 
@@ -185,6 +186,9 @@ const FleetDetail = ({ match = { params: {} } }) => {
       }
     },
   });
+
+  const companyId = formik.values.company;
+  const vesselOptionList = useMemo(() => vessels.filter((vessel) => vessel.companyId === companyId), [companyId, vessels]);
 
   useEffect(() => {
     if (me?.userRole?.role === SUPER_ADMIN) {
@@ -328,6 +332,12 @@ const FleetDetail = ({ match = { params: {} } }) => {
     }
   };
 
+  useEffect(() => {
+    if (!isSuperAdmin) {
+      formik.setFieldValue('company', me.companyId);
+    }
+  }, [isSuperAdmin, me]);
+
   // const handleDownloadSample = () => {
   //   getVesselSample().then((res) => {
   //     const blob = new Blob([res], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -376,7 +386,7 @@ const FleetDetail = ({ match = { params: {} } }) => {
                   <Typography component="p">Vessel</Typography>
                   <MultiSelect
                     className={classes.input}
-                    options={vessels}
+                    options={vesselOptionList}
                     optionLabel="name"
                     optionValue="id"
                     {...formik.getFieldProps('vessels')}
