@@ -162,17 +162,25 @@ const CreateFleet = () => {
                   <Box className={classes.wrapper}>
                     <Typography component="p">Company</Typography>
                     <CommonSelect
-                      className={classes.input} options={companies} optionLabel="name" optionValue="id"
-                      {...formik.getFieldProps('company')} />
+                      className={classes.input}
+                      options={companies}
+                      optionLabel="name"
+                      optionValue="id"
+                      {...formik.getFieldProps('company')}
+                    />
                   </Box>
                 )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Vessel</Typography>
                   <MultiSelect
-                    className={classes.input} options={vesselList} optionLabel="name" optionValue="id"
-                    {...formik.getFieldProps('vessels')} onChange={(value) => {
-                    formik.setFieldValue('vessels', value);
-                  }}
+                    className={classes.input}
+                    options={vesselList}
+                    optionLabel="name"
+                    optionValue="id"
+                    {...formik.getFieldProps('vessels')}
+                    onChange={(value) => {
+                      formik.setFieldValue('vessels', value);
+                    }}
                   />
                 </Box>
                 <Box className={classes.action}>
