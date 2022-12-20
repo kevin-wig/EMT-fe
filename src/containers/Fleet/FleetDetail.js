@@ -351,6 +351,8 @@ const FleetDetail = ({ match = { params: {} } }) => {
   //   });
   // };
 
+  console.log(me);
+  console.log(companies);
   return (
     <Root className={classes.root}>
       <Box className={classes.title}>
@@ -372,16 +374,18 @@ const FleetDetail = ({ match = { params: {} } }) => {
                     loading={loading}
                   />
                 </Box>
-                <Box className={classes.wrapper}>
-                  <Typography component="p">Company</Typography>
-                  <CommonSelect
-                    className={classes.input}
-                    options={companies ? companies : [me?.company]}
-                    optionLabel="name"
-                    optionValue="id"
-                    {...formik.getFieldProps('company')}
-                  />
-                </Box>
+                {isSuperAdmin && (
+                  <Box className={classes.wrapper}>
+                    <Typography component="p">Company</Typography>
+                    <CommonSelect
+                      className={classes.input}
+                      options={companies?.length ? companies : me?.company ? [me?.company] : []}
+                      optionLabel="name"
+                      optionValue="id"
+                      {...formik.getFieldProps('company')}
+                    />
+                  </Box>
+                )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Vessel</Typography>
                   <MultiSelect
