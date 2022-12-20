@@ -351,8 +351,6 @@ const FleetDetail = ({ match = { params: {} } }) => {
   //   });
   // };
 
-  console.log(me);
-  console.log(companies);
   return (
     <Root className={classes.root}>
       <Box className={classes.title}>
