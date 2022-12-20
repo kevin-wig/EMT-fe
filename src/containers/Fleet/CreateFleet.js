@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -112,6 +112,9 @@ const CreateFleet = () => {
     },
   });
 
+  const companyId = formik.values.company;
+  const vesselList = useMemo(() => vessels.filter((vessel) => vessel.companyId === companyId), [companyId, vessels]);
+
   useEffect(() => {
     getCompanies().then((res) => {
       if (res?.length > 0) {
@@ -122,6 +125,18 @@ const CreateFleet = () => {
     getVessels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!isSuperAdmin) {
+      formik.setFieldValue('company', me.companyId);
+    }
+  }, [isSuperAdmin, me]);
+
+  useEffect(() => {
+    if (companyId) {
+      formik.setFieldValue('vessels', vesselList.map((vessel) => vessel.id));
+    }
+  }, [companyId, vesselList]);
 
   return (
     <Root className={classes.root}>
@@ -147,31 +162,22 @@ const CreateFleet = () => {
                   <Box className={classes.wrapper}>
                     <Typography component="p">Company</Typography>
                     <CommonSelect
-                      className={classes.input}
-                      options={companies}
-                      optionLabel="name"
-                      optionValue="id"
-                      {...formik.getFieldProps('company')}
-                    />
+                      className={classes.input} options={companies} optionLabel="name" optionValue="id"
+                      {...formik.getFieldProps('company')} />
                   </Box>
                 )}
                 <Box className={classes.wrapper}>
                   <Typography component="p">Vessel</Typography>
                   <MultiSelect
-                    className={classes.input}
-                    options={vessels}
-                    optionLabel="name"
-                    optionValue="id"
-                    {...formik.getFieldProps('vessels')}
-                    onChange={(value) => {
-                      formik.setFieldValue('vessels', value);
-                    }}
+                    className={classes.input} options={vesselList} optionLabel="name" optionValue="id"
+                    {...formik.getFieldProps('vessels')} onChange={(value) => {
+                    formik.setFieldValue('vessels', value);
+                  }}
                   />
                 </Box>
                 <Box className={classes.action}>
                   <CommonButton
-                    variant="normal"
-                    onClick={() => history.push('/fleets')}
+                    variant="normal" onClick={() => history.push('/fleets')}
                   >
                     Back
                   </CommonButton>
