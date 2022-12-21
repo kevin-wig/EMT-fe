@@ -45,14 +45,14 @@ export const voyageSchema = Yup.object().shape({
     message,
     twoDigitsOnly
   ),
-  fuelCost: Yup.number(),
+  // fuelCost: Yup.number(),
   bioFuel: Yup.number().min(0).max(10000).test(
     "inputEntry",
     message,
     twoDigitsOnly
   ),
   bunkerCost: Yup.number().positive(),
-  freightCharges: Yup.number(),
+  // freightCharges: Yup.number(),
   distanceTraveled: Yup.number().min(1).max(9999999),
   freightProfit: Yup.number().positive(),
   lpgPp: Yup.number().min(0).max(10000).test(
@@ -113,14 +113,14 @@ export const aggregateSchema = Yup.object().shape({
     message,
     twoDigitsOnly
   ),
-  fuelCost: Yup.number(),
+  // fuelCost: Yup.number(),
   bioFuel: Yup.number().min(0).max(10000).test(
     "inputEntry",
     message,
     twoDigitsOnly
   ),
   bunkerCost: Yup.number().positive(),
-  freightCharges: Yup.number(),
+  // freightCharges: Yup.number(),
   distanceTraveled: Yup.number().min(1).max(9999999),
   freightProfit: Yup.number().positive(),
   lpgPp: Yup.number().min(0).max(10000).test(
