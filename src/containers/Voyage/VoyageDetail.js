@@ -1,31 +1,31 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router';
-import { useFormik } from 'formik';
-import { styled } from '@mui/material/styles';
+import { Tooltip } from '@mui/material';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { Tooltip } from '@mui/material';
-import { useSnackbar } from '../../context/snack.context';
-import { useVessel } from '../../context/vessel.context';
-import CommonTextField from '../../components/Forms/CommonTextField';
-import CommonDatePicker from '../../components/Forms/DatePicker';
-import CommonSelect from '../../components/Forms/CommonSelect';
+import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+import { useFormik } from 'formik';
+import moment from 'moment';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useHistory } from 'react-router';
 import CommonButton from '../../components/Buttons/CommonButton';
 import DetailCard from '../../components/Cards/DetailCard';
+import CommonSelect from '../../components/Forms/CommonSelect';
+import CommonTextField from '../../components/Forms/CommonTextField';
+import CommonDatePicker from '../../components/Forms/DatePicker';
 import PortSelect from '../../components/Forms/PortSelect';
 import Modal from '../../components/Modals/Modal';
-import { voyageSchema, aggregateSchema } from '../../validations/voyage.schema';
 import {
   ADDITIONAL_VOYAGE_OPTIONS,
   FUEL_GRADES,
   JOURNEY_OPTION,
 } from '../../constants/Global';
-import moment from 'moment';
-import { useAuth } from '../../context/auth.context';
 import { SUPER_ADMIN } from '../../constants/UserRoles';
+import { useAuth } from '../../context/auth.context';
 import { useCompany } from '../../context/company.context';
+import { useSnackbar } from '../../context/snack.context';
+import { useVessel } from '../../context/vessel.context';
+import { aggregateSchema, voyageSchema } from '../../validations/voyage.schema';
 
 const PREFIX = 'voyage-detail';
 const classes = {
@@ -129,7 +129,7 @@ const VoyageDetail = ({ match }) => {
   const [vesselsList, setVesselsList] = useState();
   const [deletingVoyage, setDeletingVoyage] = useState();
   const [importVoyageOption, setImportVoyageOption] = useState(
-    JOURNEY_OPTION.CII,
+    JOURNEY_OPTION.CII
   );
   const [etsKpi, setEtsKpi] = useState(null);
   const [timeControl, setTimeControl] = useState({
@@ -149,9 +149,10 @@ const VoyageDetail = ({ match }) => {
   }, [getVessels, getPorts, isSuperAdmin]);
 
   useEffect(() => {
-    setVesselsList(isSuperAdmin
-      ? vessels.filter((vessel) => vessel.companyId === companyId)
-      : vessels.filter((vessel) => vessel.companyId === me?.companyId)
+    setVesselsList(
+      isSuperAdmin
+        ? vessels.filter((vessel) => vessel.companyId === companyId)
+        : vessels.filter((vessel) => vessel.companyId === me?.companyId)
     );
   }, [vessels, companyId, isSuperAdmin]);
 
@@ -211,8 +212,12 @@ const VoyageDetail = ({ match }) => {
         lpgPp: values.lpgPp || 0,
         lpgBt: values.lpgBt || 0,
         isAggregate: aggregate,
-        fromDate: aggregate ? new Date(`${values.year}/01/01 00:00:00`).toISOString() : values.fromDate,
-        toDate: aggregate ? new Date(`${values.year}/12/31 23:59:59`).toISOString() : values.toDate,
+        fromDate: aggregate
+          ? new Date(`${values.year}/01/01 00:00:00`).toISOString()
+          : values.fromDate,
+        toDate: aggregate
+          ? new Date(`${values.year}/12/31 23:59:59`).toISOString()
+          : values.toDate,
       };
 
       if (importVoyageOption !== JOURNEY_OPTION.ETS) {
@@ -221,15 +226,24 @@ const VoyageDetail = ({ match }) => {
 
       if (splittedData.length > 1) {
         splittedData.forEach((year, i) => {
-          let toDate = i === 0 ? new Date(moment(data.fromDate).endOf('year').subtract(12, 'hours')).toISOString() : data.toDate;
-          let fromDate = i === 1 ? new Date(moment(data.toDate).startOf('year')).toISOString() : data.fromDate;
+          let toDate =
+            i === 0
+              ? new Date(
+                  moment(data.fromDate).endOf('year').subtract(12, 'hours')
+                ).toISOString()
+              : data.toDate;
+          let fromDate =
+            i === 1
+              ? new Date(moment(data.toDate).startOf('year')).toISOString()
+              : data.fromDate;
           let distanceTraveled = data[`distanceTraveled${i}`];
 
           delete data[`distanceTraveled${i}`];
 
           let _data = { ...data, toDate, fromDate, distanceTraveled };
 
-          if (data[`distanceTraveled${i + 1}`]) delete _data[`distanceTraveled${i + 1}`];
+          if (data[`distanceTraveled${i + 1}`])
+            delete _data[`distanceTraveled${i + 1}`];
 
           if (match.params.id && match.params.id !== 'create') {
             updateVesselTrip(match.params.id, _data)
@@ -239,8 +253,14 @@ const VoyageDetail = ({ match }) => {
               })
               .catch((err) => {
                 if (err?.response?.data) {
-                  if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
-                    notify(Object.values(err.response.data.errors)[0][0], 'error');
+                  if (
+                    err.response.data.errors &&
+                    Object.keys(err.response.data.errors).length
+                  ) {
+                    notify(
+                      Object.values(err.response.data.errors)[0][0],
+                      'error'
+                    );
                   } else {
                     notify(err.response.data.message, 'error');
                   }
@@ -255,8 +275,14 @@ const VoyageDetail = ({ match }) => {
               })
               .catch((err) => {
                 if (err?.response?.data) {
-                  if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
-                    notify(Object.values(err.response.data.errors)[0][0], 'error');
+                  if (
+                    err.response.data.errors &&
+                    Object.keys(err.response.data.errors).length
+                  ) {
+                    notify(
+                      Object.values(err.response.data.errors)[0][0],
+                      'error'
+                    );
                   } else {
                     notify(err.response.data.message, 'error');
                   }
@@ -274,8 +300,14 @@ const VoyageDetail = ({ match }) => {
             })
             .catch((err) => {
               if (err?.response?.data) {
-                if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
-                  notify(Object.values(err.response.data.errors)[0][0], 'error');
+                if (
+                  err.response.data.errors &&
+                  Object.keys(err.response.data.errors).length
+                ) {
+                  notify(
+                    Object.values(err.response.data.errors)[0][0],
+                    'error'
+                  );
                 } else {
                   notify(err.response.data.message, 'error');
                 }
@@ -290,8 +322,14 @@ const VoyageDetail = ({ match }) => {
             })
             .catch((err) => {
               if (err?.response?.data) {
-                if (err.response.data.errors && Object.keys(err.response.data.errors).length) {
-                  notify(Object.values(err.response.data.errors)[0][0], 'error');
+                if (
+                  err.response.data.errors &&
+                  Object.keys(err.response.data.errors).length
+                ) {
+                  notify(
+                    Object.values(err.response.data.errors)[0][0],
+                    'error'
+                  );
                 } else {
                   notify(err.response.data.message, 'error');
                 }
@@ -305,7 +343,11 @@ const VoyageDetail = ({ match }) => {
 
   useEffect(() => {
     const vesselId = formik.getFieldProps('vessel').value;
-    if (vesselsList && vesselsList.length && !vesselsList.find((vessel) => +vessel.id === +vesselId)) {
+    if (
+      vesselsList &&
+      vesselsList.length &&
+      !vesselsList.find((vessel) => +vessel.id === +vesselId)
+    ) {
       formik.setFieldValue('vessel', vesselsList[0].id);
     }
   }, [vesselsList]);
@@ -314,7 +356,11 @@ const VoyageDetail = ({ match }) => {
     if (!isNaN(parseFloat(value)) && !isNaN(value - 0)) {
       return parseFloat(value)?.toFixed(3);
     } else {
-      return <Tooltip title="No data available" placement="top"><span>N/A</span></Tooltip>;
+      return (
+        <Tooltip title="No data available" placement="top">
+          <span>N/A</span>
+        </Tooltip>
+      );
     }
   };
 
@@ -328,20 +374,62 @@ const VoyageDetail = ({ match }) => {
           destinationPort: res.data?.destinationPort?.name,
           toDate: new Date(res.data?.toDate),
           fromDate: new Date(res.data?.fromDate),
-          freightProfit: !isNaN(parseFloat(res.data?.freightProfit)) && !isNaN(res.data?.freightProfit - 0) ? parseFloat(Number(res.data?.freightProfit)?.toFixed(2)) : res.data?.freightProfit || 0,
+          freightProfit:
+            !isNaN(parseFloat(res.data?.freightProfit)) &&
+            !isNaN(res.data?.freightProfit - 0)
+              ? parseFloat(Number(res.data?.freightProfit)?.toFixed(2))
+              : res.data?.freightProfit || 0,
           // fuelCost: !isNaN(parseFloat(res.data?.fuelCost)) && !isNaN(res.data?.fuelCost - 0) ? parseFloat(Number(res.data?.fuelCost)?.toFixed(2)) : res.data?.fuelCost,
           // freightCharges: !isNaN(parseFloat(res.data?.freightCharges)) && !isNaN(res.data?.freightCharges - 0) ? parseFloat(Number(res.data?.freightCharges)?.toFixed(2)) : res.data?.freightCharges,
-          bunkerCost: !isNaN(parseFloat(res.data?.bunkerCost)) && !isNaN(res.data?.bunkerCost - 0) ? parseFloat(Number(res.data?.bunkerCost)?.toFixed(2)) : res.data?.bunkerCost || 0,
-          mgo: !isNaN(parseFloat(res.data?.mgo)) && !isNaN(res.data?.mgo - 0) ? parseFloat(Number(res.data?.mgo)?.toFixed(2)) : res.data?.mgo || 0,
-          lfo: !isNaN(parseFloat(res.data?.lfo)) && !isNaN(res.data?.lfo - 0) ? parseFloat(Number(res.data?.lfo)?.toFixed(2)) : res.data?.lfo || 0,
-          hfo: !isNaN(parseFloat(res.data?.hfo)) && !isNaN(res.data?.hfo - 0) ? parseFloat(Number(res.data?.hfo)?.toFixed(2)) : res.data?.hfo || 0,
-          vlsfoXB: !isNaN(parseFloat(res.data?.vlsfoXB)) && !isNaN(res.data?.vlsfoXB - 0) ? parseFloat(Number(res.data?.vlsfoXB)?.toFixed(2)) : res.data?.vlsfoXB || 0,
-          vlsfoAD: !isNaN(parseFloat(res.data?.vlsfoAD)) && !isNaN(res.data?.vlsfoAD - 0) ? parseFloat(Number(res.data?.vlsfoAD)?.toFixed(2)) : res.data?.vlsfoAD || 0,
-          vlsfoEK: !isNaN(parseFloat(res.data?.vlsfoEK)) && !isNaN(res.data?.vlsfoEK - 0) ? parseFloat(Number(res.data?.vlsfoEK)?.toFixed(2)) : res.data?.vlsfoEK || 0,
-          lpgPp: !isNaN(parseFloat(res.data?.lpgPp)) && !isNaN(res.data?.lpgPp - 0) ? parseFloat(Number(res.data?.lpgPp)?.toFixed(2)) : res.data?.lpgPp || 0,
-          lpgBt: !isNaN(parseFloat(res.data?.lpgBt)) && !isNaN(res.data?.lpgBt - 0) ? parseFloat(Number(res.data?.lpgBt)?.toFixed(2)) : res.data?.lpgBt || 0,
-          lng: !isNaN(parseFloat(res.data?.lng)) && !isNaN(res.data?.lng - 0) ? parseFloat(Number(res.data?.lng)?.toFixed(2)) : res.data?.lng || 0,
-          bioFuel: !isNaN(parseFloat(res.data?.bioFuel)) && !isNaN(res.data?.bioFuel - 0) ? parseFloat(Number(res.data?.bioFuel)?.toFixed(2)) : res.data?.bioFuel || 0,
+          bunkerCost:
+            !isNaN(parseFloat(res.data?.bunkerCost)) &&
+            !isNaN(res.data?.bunkerCost - 0)
+              ? parseFloat(Number(res.data?.bunkerCost)?.toFixed(2))
+              : res.data?.bunkerCost || 0,
+          mgo:
+            !isNaN(parseFloat(res.data?.mgo)) && !isNaN(res.data?.mgo - 0)
+              ? parseFloat(Number(res.data?.mgo)?.toFixed(2))
+              : res.data?.mgo || 0,
+          lfo:
+            !isNaN(parseFloat(res.data?.lfo)) && !isNaN(res.data?.lfo - 0)
+              ? parseFloat(Number(res.data?.lfo)?.toFixed(2))
+              : res.data?.lfo || 0,
+          hfo:
+            !isNaN(parseFloat(res.data?.hfo)) && !isNaN(res.data?.hfo - 0)
+              ? parseFloat(Number(res.data?.hfo)?.toFixed(2))
+              : res.data?.hfo || 0,
+          vlsfoXB:
+            !isNaN(parseFloat(res.data?.vlsfoXB)) &&
+            !isNaN(res.data?.vlsfoXB - 0)
+              ? parseFloat(Number(res.data?.vlsfoXB)?.toFixed(2))
+              : res.data?.vlsfoXB || 0,
+          vlsfoAD:
+            !isNaN(parseFloat(res.data?.vlsfoAD)) &&
+            !isNaN(res.data?.vlsfoAD - 0)
+              ? parseFloat(Number(res.data?.vlsfoAD)?.toFixed(2))
+              : res.data?.vlsfoAD || 0,
+          vlsfoEK:
+            !isNaN(parseFloat(res.data?.vlsfoEK)) &&
+            !isNaN(res.data?.vlsfoEK - 0)
+              ? parseFloat(Number(res.data?.vlsfoEK)?.toFixed(2))
+              : res.data?.vlsfoEK || 0,
+          lpgPp:
+            !isNaN(parseFloat(res.data?.lpgPp)) && !isNaN(res.data?.lpgPp - 0)
+              ? parseFloat(Number(res.data?.lpgPp)?.toFixed(2))
+              : res.data?.lpgPp || 0,
+          lpgBt:
+            !isNaN(parseFloat(res.data?.lpgBt)) && !isNaN(res.data?.lpgBt - 0)
+              ? parseFloat(Number(res.data?.lpgBt)?.toFixed(2))
+              : res.data?.lpgBt || 0,
+          lng:
+            !isNaN(parseFloat(res.data?.lng)) && !isNaN(res.data?.lng - 0)
+              ? parseFloat(Number(res.data?.lng)?.toFixed(2))
+              : res.data?.lng || 0,
+          bioFuel:
+            !isNaN(parseFloat(res.data?.bioFuel)) &&
+            !isNaN(res.data?.bioFuel - 0)
+              ? parseFloat(Number(res.data?.bioFuel)?.toFixed(2))
+              : res.data?.bioFuel || 0,
         });
         setImportVoyageOption(res.data?.journeyType);
 
@@ -369,7 +457,7 @@ const VoyageDetail = ({ match }) => {
       setDeletingVoyage(null);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [deletingVoyage],
+    [deletingVoyage]
   );
 
   const handleAddGrade = () => {
@@ -390,7 +478,7 @@ const VoyageDetail = ({ match }) => {
     const grades = formik.values.grades;
     formik.setFieldValue(
       'grades',
-      grades.filter((section, sectionIndex) => sectionIndex !== index),
+      grades.filter((section, sectionIndex) => sectionIndex !== index)
     );
   };
 
@@ -401,18 +489,19 @@ const VoyageDetail = ({ match }) => {
       grades.map((section, sectionIndex) =>
         sectionIndex === index
           ? {
-            ...section,
-            [field]: value,
-          }
-          : section,
-      ),
+              ...section,
+              [field]: value,
+            }
+          : section
+      )
     );
   };
 
   const handleTypeChange = (value) => {
     const current = new Date();
     let time = {
-      arrival: {}, departure: {},
+      arrival: {},
+      departure: {},
     };
 
     if (value === 'ACTUAL') {
@@ -443,7 +532,10 @@ const VoyageDetail = ({ match }) => {
   const handleYearsDiffValidation = (years) => {
     if (years.length > 1) {
       if (years[1] - years[0] > 1) {
-        notify('Departure date and arrival date cannot have more than 1 year in difference', 'error');
+        notify(
+          'Departure date and arrival date cannot have more than 1 year in difference',
+          'error'
+        );
         return false;
       } else {
         setSplittedData(years);
@@ -595,7 +687,9 @@ const VoyageDetail = ({ match }) => {
                     optionValue="value"
                     {...formik.getFieldProps('voyageType')}
                     onChange={(e) => handleTypeChange(e.target.value)}
-                    error={formik.touched.voyageType && formik.errors.voyageType}
+                    error={
+                      formik.touched.voyageType && formik.errors.voyageType
+                    }
                   />
                 </Box>
               </Grid>
@@ -611,46 +705,44 @@ const VoyageDetail = ({ match }) => {
                 </Box>
               </Grid>
               {match.params.id &&
-              match.params.id !== 'create' &&
-              importVoyageOption === JOURNEY_OPTION.ETS && (
-                <>
-                  <Grid item xs={12} md={4} marginBottom={2}>
-                    <Paper className={classes.etsKpi}>
-                      <Typography>CO2 ETS</Typography>
-                      <Typography>
-                        {FormatNumber(etsKpi?.totalCo2Ets)}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={12} md={4} marginBottom={2}>
-                    <Paper className={classes.etsKpi}>
-                      <Typography>EUA Cost</Typography>
-                      <Typography>
-                        €{FormatNumber(etsKpi?.euaCost)}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                  <Grid item xs={12} md={4} marginBottom={2}>
-                    <Paper className={classes.etsKpi}>
-                      <Typography>CO2 emissions</Typography>
-                      <Typography>
-                        {FormatNumber(etsKpi?.totalCo2Emission)}
-                      </Typography>
-                    </Paper>
-                  </Grid>
-                </>
-              )}
+                match.params.id !== 'create' &&
+                importVoyageOption === JOURNEY_OPTION.ETS && (
+                  <>
+                    <Grid item xs={12} md={4} marginBottom={2}>
+                      <Paper className={classes.etsKpi}>
+                        <Typography>CO2 ETS</Typography>
+                        <Typography>
+                          {FormatNumber(etsKpi?.totalCo2Ets)}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={4} marginBottom={2}>
+                      <Paper className={classes.etsKpi}>
+                        <Typography>EUA Cost</Typography>
+                        <Typography>
+                          €{FormatNumber(etsKpi?.euaCost)}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12} md={4} marginBottom={2}>
+                      <Paper className={classes.etsKpi}>
+                        <Typography>CO2 emissions</Typography>
+                        <Typography>
+                          {FormatNumber(etsKpi?.totalCo2Emission)}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  </>
+                )}
               {!aggregate && (
                 <Grid item xs={12} md={6}>
                   <Box className={classes.wrapper}>
                     <Typography component="p">Origin Port</Typography>
                     <PortSelect
                       className={classes.input}
-                      options={ports.map(function (item) {
+                      options={ports.map(function (item, index) {
                         return item['name'];
                       })}
-                      optionLabel="name"
-                      optionValue="name"
                       {...formik.getFieldProps('originPort')}
                       onChange={(value) => {
                         formik.setFieldValue('originPort', value);
@@ -668,11 +760,9 @@ const VoyageDetail = ({ match }) => {
                     <Typography>Destination Port</Typography>
                     <PortSelect
                       className={classes.input}
-                      options={ports.map(function (item) {
+                      options={ports.map(function (item, index) {
                         return item['name'];
                       })}
-                      optionLabel="name"
-                      optionValue="name"
                       {...formik.getFieldProps('destinationPort')}
                       onChange={(value) =>
                         formik.setFieldValue('destinationPort', value)
@@ -721,51 +811,34 @@ const VoyageDetail = ({ match }) => {
                   </Box>
                 </Grid>
               )}
-              {
-                aggregate && (
-                  <Grid item xs={6} md={6}>
+              {aggregate && (
+                <Grid item xs={6} md={6}>
+                  <Box className={classes.wrapper}>
+                    <Typography>Year</Typography>
+                    <CommonTextField
+                      className={classes.input}
+                      placeholder="Enter Year"
+                      {...formik.getFieldProps('year')}
+                      error={formik.touched.year && formik.errors.year}
+                      loading={loading}
+                    />
+                  </Box>
+                </Grid>
+              )}
+              {splittedData.length > 1 ? (
+                splittedData.map((_date, i) => (
+                  <Grid
+                    item
+                    xs={aggregate ? 6 : 12}
+                    md={aggregate ? 6 : 12}
+                    key={i}
+                  >
                     <Box className={classes.wrapper}>
-                      <Typography>Year</Typography>
+                      <Typography>Nautical Miles in Year {_date} </Typography>
                       <CommonTextField
                         className={classes.input}
-                        placeholder="Enter Year"
-                        {...formik.getFieldProps('year')}
-                        error={
-                          formik.touched.year &&
-                          formik.errors.year
-                        }
-                        loading={loading}
-                      />
-                    </Box>
-                  </Grid>
-                )
-              }
-              {
-                splittedData.length > 1 ? splittedData.map((_date, i) =>
-                    <Grid item xs={aggregate ? 6 : 12} md={aggregate ? 6 : 12} key={i}>
-                      <Box className={classes.wrapper}>
-                        <Typography>Nautical Miles in Year {_date} </Typography>
-                        <CommonTextField
-                          className={classes.input}
-                          placeholder={`Enter Nautical Miles in Year ${_date}`}
-                          {...formik.getFieldProps(`distanceTraveled${i}`)}
-                          error={
-                            formik.touched.distanceTraveled &&
-                            formik.errors.distanceTraveled
-                          }
-                          loading={loading}
-                        />
-                      </Box>
-                    </Grid>,
-                  )
-                  :
-                  <Grid item xs={aggregate ? 6 : 12} md={aggregate ? 6 : 12}>
-                    <Box className={classes.wrapper}>
-                      <Typography>Nautical Miles</Typography>
-                      <CommonTextField
-                        className={classes.input}
-                        placeholder="Enter Nautical Miles"
-                        {...formik.getFieldProps('distanceTraveled')}
+                        placeholder={`Enter Nautical Miles in Year ${_date}`}
+                        {...formik.getFieldProps(`distanceTraveled${i}`)}
                         error={
                           formik.touched.distanceTraveled &&
                           formik.errors.distanceTraveled
@@ -774,7 +847,24 @@ const VoyageDetail = ({ match }) => {
                       />
                     </Box>
                   </Grid>
-              }
+                ))
+              ) : (
+                <Grid item xs={aggregate ? 6 : 12} md={aggregate ? 6 : 12}>
+                  <Box className={classes.wrapper}>
+                    <Typography>Nautical Miles</Typography>
+                    <CommonTextField
+                      className={classes.input}
+                      placeholder="Enter Nautical Miles"
+                      {...formik.getFieldProps('distanceTraveled')}
+                      error={
+                        formik.touched.distanceTraveled &&
+                        formik.errors.distanceTraveled
+                      }
+                      loading={loading}
+                    />
+                  </Box>
+                </Grid>
+              )}
               <Grid item xs={12} md={6}>
                 <Box className={classes.wrapper}>
                   <Typography>Freight Profit</Typography>
@@ -1014,7 +1104,7 @@ const VoyageDetail = ({ match }) => {
                                   handleChangeGrade(
                                     index,
                                     e.target.value,
-                                    'inboundEu',
+                                    'inboundEu'
                                   )
                                 }
                                 error={
@@ -1035,7 +1125,7 @@ const VoyageDetail = ({ match }) => {
                                   handleChangeGrade(
                                     index,
                                     e.target.value,
-                                    'outboundEu',
+                                    'outboundEu'
                                   )
                                 }
                                 error={
@@ -1057,7 +1147,7 @@ const VoyageDetail = ({ match }) => {
                                   handleChangeGrade(
                                     index,
                                     e.target.value,
-                                    'withinEu',
+                                    'withinEu'
                                   )
                                 }
                                 error={
@@ -1079,7 +1169,7 @@ const VoyageDetail = ({ match }) => {
                                   handleChangeGrade(
                                     index,
                                     e.target.value,
-                                    'euPort',
+                                    'euPort'
                                   )
                                 }
                                 error={

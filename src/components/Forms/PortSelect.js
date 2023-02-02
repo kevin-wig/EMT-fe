@@ -42,7 +42,11 @@ const PortSelect = ({
       }}
       popupIcon={<KeyboardArrowDownIcon />}
       renderOption={(props, option) => (
-        <Box component="li" {...props}>
+        <Box
+          component="li"
+          {...props}
+          key={`${option}_${props['data-option-index']}`}
+        >
           {option || PLACEHOLDER}
         </Box>
       )}
