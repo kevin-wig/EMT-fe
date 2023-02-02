@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import useTheme from '@mui/material/styles/useTheme';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import BarChart from '../../../components/Charts/BarChart';
-import DataTable from '../../../components/Table/DataTable';
-import FilterModal from '../../../components/Modals/FleetModal';
-import InfoCard from '../../../components/Cards/InfoCard';
-import LineChart from '../../../components/Charts/LineChart';
-import { useCompany } from '../../../context/company.context';
-import { useSnackbar } from '../../../context/snack.context';
-import { useDebounce } from '../../../hooks/use-debounce';
-import { useVessel } from '../../../context/vessel.context';
-import { useFleet } from '../../../context/fleet.context';
 import moment from 'moment';
+import InfoCard from '../../../components/Cards/InfoCard';
+import BarChart from '../../../components/Charts/BarChart';
+import LineChart from '../../../components/Charts/LineChart';
+import FilterModal from '../../../components/Modals/FleetModal';
+import DataTable from '../../../components/Table/DataTable';
+import { useCompany } from '../../../context/company.context';
+import { useFleet } from '../../../context/fleet.context';
+import { useSnackbar } from '../../../context/snack.context';
+import { useVessel } from '../../../context/vessel.context';
+import { useDebounce } from '../../../hooks/use-debounce';
 
 const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
   const theme = useTheme();
@@ -242,18 +242,35 @@ const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
 
   return (
     <>
-      <Grid container spacing={3} sx={{ marginBottom: '1.5rem' }} id="converting-pdf">
+      <Grid
+        container
+        spacing={3}
+        sx={{ marginBottom: '1.5rem' }}
+        id="converting-pdf"
+      >
         <Grid item xs={12} md={6} lg={3}>
-          <InfoCard title="Total CO2 ETS" subTitle={thisYear} value={kpi?.totalEts || '0'} />
+          <InfoCard
+            title="Total CO2 ETS"
+            subTitle={thisYear}
+            value={kpi?.totalEts || '0'}
+          />
         </Grid>
         <Grid item xs={12} md={6} lg={3}>
-          <InfoCard title="EUA cost" subTitle={thisYear} value={`€${kpi?.totalEuaCost || '0'}`} />
+          <InfoCard
+            title="EUA cost"
+            subTitle={thisYear}
+            value={`€${kpi?.totalEuaCost || '0'}`}
+          />
         </Grid>
         <Grid item xs={12} md={6} lg={3}>
           <InfoCard
             title="Freight profit for EU voyages"
             subTitle={thisYear}
-            value= {kpi?.freightProfit ? `€${parseFloat(kpi?.freightProfit).toFixed(3)}` : '€0'}
+            value={
+              kpi?.freightProfit
+                ? `€${parseFloat(kpi?.freightProfit).toFixed(3)}`
+                : '€0'
+            }
             color="primary"
           />
         </Grid>
@@ -261,13 +278,17 @@ const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
           <InfoCard
             title="Total Bunker Costs"
             subTitle={thisYear}
-            value= {kpi?.totalBunkerCost ? `€${parseFloat(kpi?.totalBunkerCost).toFixed(3)}` : '€0' } 
+            value={
+              kpi?.totalBunkerCost
+                ? `€${parseFloat(kpi?.totalBunkerCost).toFixed(3)}`
+                : '€0'
+            }
             color="secondary"
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <LineChart
-            title="CO2 and ETS CO2 emissions(2023)"
+            title={`CO2 and ETS CO2 emissions(${thisYear})`}
             data={euPerVessel}
             height={200}
             xLabel="Vessel"
@@ -275,7 +296,7 @@ const DashboardEuEts = ({ company, thisYear, /*type*/ }) => {
         </Grid>
         <Grid item xs={12} md={6}>
           <BarChart
-            title="Comparison of vessels allowance cost with the fares and bunkers cost for 2023"
+            title={`Comparison of vessels allowance cost with the fares and bunkers cost for ${thisYear}`}
             data={certificate}
             yMaxTicksLimit={4}
             height={200}
