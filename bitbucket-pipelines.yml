@@ -39,7 +39,7 @@ pipelines:
     qa:
       - step:
           name: Installation
-          deployment: azure-qa-env
+          deployment: azure-afaia-prod-env
           caches:
             - node
           script:
@@ -47,9 +47,6 @@ pipelines:
             - npm install -g yarn
             - yarn install
             - unset CI
-            - touch .env
-            - echo $ENV_FILE_BASE64 | base64 --decode --ignore-garbage > .env
-            - cat .env
             - yarn build
             - ls
             - cd build
@@ -58,7 +55,7 @@ pipelines:
             - emt-fe-*.zip
       - step:
           name: "Deploy to Azure"
-          deployment: azure-qa
+          deployment: azure-afaia-prod
           script:
             - pipe: microsoft/azure-web-apps-deploy:1.0.4
               variables:

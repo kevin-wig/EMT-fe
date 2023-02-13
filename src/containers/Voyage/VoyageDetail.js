@@ -183,10 +183,10 @@ const VoyageDetail = ({ match }) => {
       grades: [
         {
           grade: '',
-          inboundEu: '',
-          outboundEu: '',
-          withinEu: '',
-          euPort: '',
+          inboundEu: 0,
+          outboundEu: 0,
+          withinEu: 0,
+          euPort: 0,
         },
       ],
     },
@@ -466,10 +466,10 @@ const VoyageDetail = ({ match }) => {
       ...grades,
       {
         grade: '',
-        inboundEu: '',
-        outboundEu: '',
-        withinEu: '',
-        euPort: '',
+        inboundEu: 0,
+        outboundEu: 0,
+        withinEu: 0,
+        euPort: 0,
       },
     ]);
   };
@@ -490,7 +490,7 @@ const VoyageDetail = ({ match }) => {
         sectionIndex === index
           ? {
               ...section,
-              [field]: value,
+              [field]: value || 0,
             }
           : section
       )
