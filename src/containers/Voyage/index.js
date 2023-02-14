@@ -192,7 +192,7 @@ const Voyage = () => {
   const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
-      voyageType: voyageType === 'VISIBLE' ? ['PREDICTED', 'ACTUAL'] : [voyageType],
+      voyageType: voyageType === 'VISIBLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
       journeyType: selectedTab,
       ...(+vesselId !== -1 && { vesselId }),
       ...(+filterCompany !== 0 && { companyId: filterCompany }),
@@ -891,6 +891,7 @@ const Voyage = () => {
             { name: 'Select Type', value: 'VISIBLE' },
             { name: 'Actual', value: 'ACTUAL' },
             { name: 'Predicted', value: 'PREDICTED' },
+            { name: 'Archived', value: 'ARCHIVED' },
           ]}
           optionLabel="name"
           optionValue="value"

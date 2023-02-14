@@ -316,7 +316,7 @@ function VesselProvider(props) {
   }, []);
 
   const getTrips = useCallback(async (params) => {
-    return await VesselsService.getTrips(params);
+    return await VesselsService.getTrips({ ...params, allType: true });
   }, []);
 
   const getVoyagesByVesselId = useCallback(async (vesselId, journeyType, fromDate, toDate) => {
