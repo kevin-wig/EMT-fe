@@ -681,7 +681,6 @@ const VoyageDetail = ({ match }) => {
                     options={[
                       { name: 'Actual', value: 'ACTUAL' },
                       { name: 'Predicted', value: 'PREDICTED' },
-                      { name: 'Archived', value: 'ARCHIVED' },
                     ]}
                     optionLabel="name"
                     optionValue="value"
