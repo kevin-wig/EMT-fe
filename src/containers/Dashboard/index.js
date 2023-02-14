@@ -200,7 +200,6 @@ const Dashboard = () => {
               { name: "Select Type", value: "VISIBLE" },
               { name: "Actual", value: "ACTUAL" },
               { name: "Predicted", value: "PREDICTED" },
-              { name: "Archived", value: "ARCHIVED" },
             ]}
             optionLabel="name"
             optionValue="value"
