@@ -633,7 +633,7 @@ const VesselCII = ({ id, selectedYear }) => {
                 IMO Average
               </Typography>
               <Typography component="h4" align="center">
-                {ImoValue} Mts
+                {ImoValue}
               </Typography>
             </Box>
           </Card>
