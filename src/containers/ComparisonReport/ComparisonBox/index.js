@@ -210,12 +210,12 @@ const ComparisonBox = ({
 
       getReport({
         ...options,
-        ...(options.vesselIds.length ? {} : { vesselIds: undefined }),
+        ...(options.vesselIds.length ? {} : { vesselIds: [] }),
         year
       }).then((res) => {
         const data = res.data;
 
-        let found;
+        let found = [];
         if (!imoAverageMode) {
           if (options.vesselType) {
             found = CII_IMO_VALUES.filter((el) => +el.id === +options.vesselType);
@@ -352,7 +352,7 @@ const ComparisonBox = ({
           const oneYearMilli = 365 * 24 * 3600000;
 
           if (state.vesselAge === '25+') {
-            minYear = 0;
+            minYear = 25;
             maxYear = 10000;
           }
 
@@ -770,7 +770,7 @@ const ComparisonBox = ({
                     className={classes.input}
                     options={VESSEL_AGE_OPTIONS}
                     onChange={handleVesselAgeChange}
-                    value={formik.values.vesselAge} $
+                    value={formik.values.vesselAge}
                     optionLabel="label"
                     optionValue="key"
                     disabled={imoAverageMode}
