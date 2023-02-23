@@ -642,7 +642,7 @@ const VesselCII = ({ id, selectedYear }) => {
           <Card className={`${classes.card} speed`}>
             <Box>
               <Typography align="center">
-                Emissions Category
+                CII category
               </Typography>
               <Typography component="h4" align="center">
                 {kpiData?.category || 'A'}
