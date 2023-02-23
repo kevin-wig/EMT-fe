@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 
@@ -308,6 +308,19 @@ const DashboardCII = ({ company, thisYear, type }) => {
             onDblClick={handleDblClickCiiChart}
             xLabel="Year"
             yLabel="CII Attained / CII Required"
+            extraOptions={{
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (tooltipItem) => {
+                      const vessel = vesselsChart?.chart?.[tooltipItem.datasetIndex];
+                      const vesselData = vessel.data.find((item) => +item.key === +ciiOverTimeLabels.keys[tooltipItem.dataIndex]);
+                      return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vesselData.category}`;
+                    },
+                  },
+                },
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={6}>

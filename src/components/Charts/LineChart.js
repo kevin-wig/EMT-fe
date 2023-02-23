@@ -81,6 +81,7 @@ const LineChart = ({
   height,
   yMaxTicksLimit,
   stepSize,
+  extraOptions = {},
   onClick = () => null,
   onDblClick = () => null,
 }) => {
@@ -101,26 +102,6 @@ const LineChart = ({
       display: true,
       labels: {
         boxWidth: 20,
-      },
-    },
-    tooltips: {
-      intersect: false,
-      callbacks: {
-        label: function (tooltipItem, data) {
-          let label = data.datasets[tooltipItem.datasetIndex].label || "";
-          if (label) {
-            label += ": ";
-          }
-          label += parseFloat(Number(tooltipItem.yLabel)?.toFixed(3));
-          if (!useCategory) {
-            return label;
-          }
-          if (!data.datasets[tooltipItem.datasetIndex].label.includes("CII attained")) {
-            return label;
-          } else {
-            return label + " Category: " + data.categories[tooltipItem.index];
-          }
-        },
       },
     },
     hover: {
@@ -157,6 +138,7 @@ const LineChart = ({
         }
       },
     },
+    ...extraOptions,
   };
 
   return (

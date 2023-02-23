@@ -947,6 +947,18 @@ const Voyage = () => {
                 data={ciiChartPerTrip}
                 useCategory={true}
                 xLabel="Voyage ID"
+                extraOptions={{
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) => {
+                          const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vessel.category}`;
+                        },
+                      },
+                    },
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -955,6 +967,18 @@ const Voyage = () => {
                 data={ciiChartPerVoyage}
                 useCategory={true}
                 xLabel="Voyage ID"
+                extraOptions={{
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: (tooltipItem) => {
+                          const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vessel.category}`;
+                        },
+                      },
+                    },
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} md={12}>
