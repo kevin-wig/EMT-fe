@@ -193,6 +193,7 @@ const VesselCII = ({ id, selectedYear }) => {
   const [ciiPerTrip, setCiiPerTrip] = useState([]);
   const [boundCiiPerTrip, setBoundCiiPerTrip] = useState([]);
   const [chartYear, setChartYear] = useState();
+  const [categoryPerYear, setCategoryPerYear] = useState([]);
 
   const getVesselData = useCallback((year, month) => {
     getVesselCII(id, year, month, mode, fromDate?.toISOString(), toDate?.toISOString()).then((res) => {
@@ -254,7 +255,7 @@ const VesselCII = ({ id, selectedYear }) => {
     data,
   }), []);
 
-  const data = useMemo(() => {
+  const ciiOverTimeChart = useMemo(() => {
     const defaultBoundCII = { requiredCII: 0, aBound: 0, bBound: 0, cBound: 0, dBound: 0 };
     const ciiLabels = chartYear ? MONTHS : YEARS;
     const ciiKeys = chartYear ? Object.keys(MONTHS).map((index) => +index + 1) : YEARS;
@@ -262,7 +263,10 @@ const VesselCII = ({ id, selectedYear }) => {
       boundCII.find((cii) => +cii.year === chartYear) || { year: chartYear, ...defaultBoundCII },
       boundCII.find((cii) => +cii.year === chartYear + 1) || { year: chartYear + 1, ...defaultBoundCII },
     ];
-
+    setCategoryPerYear([
+      ciiKeys.map((key) => cii.find((cii) => +cii.key === key)?.category),
+      ...new Array(4).fill('').map(() => ciiKeys.map((key) => boundCII.find((cii) => +cii.year === key)?.category))
+    ]);
     return {
       labels: ciiLabels,
       categories: ciiKeys.map((key) => boundCII.find((cii) => +cii.year === key)?.category),
@@ -281,27 +285,21 @@ const VesselCII = ({ id, selectedYear }) => {
           'A-bound',
           'rgba(240,240,240,0.3)',
           2,
-          ciiKeys.map((key, index) => chartYear
-            ? parseFloat((boundCIIs[0].aBound + (boundCIIs[1].aBound - boundCIIs[0].aBound) / 12 * index) /  (boundCIIs[0].requiredCII + (boundCIIs[1].requiredCII - boundCIIs[0].requiredCII) / 12 * index))?.toFixed(3)
-            : parseFloat((boundCII.find((cii) => +cii.year === key)?.aBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
+          ciiKeys.map((key, index) => parseFloat((boundCII.find((cii) => +cii.year === key)?.aBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
           true
         ),
         getLine(
           'B-bound',
           'rgba(240,240,240,0.3)',
           3,
-          ciiKeys.map((key, index) => chartYear
-            ? parseFloat((boundCIIs[0].bBound + (boundCIIs[1].bBound - boundCIIs[0].bBound) / 12 * index) / (boundCIIs[0].requiredCII + (boundCIIs[1].requiredCII - boundCIIs[0].requiredCII) / 12 * index))?.toFixed(3)
-            : parseFloat((boundCII.find((cii) => +cii.year === key)?.bBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
+          ciiKeys.map((key, index) => parseFloat((boundCII.find((cii) => +cii.year === key)?.bBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
           true
         ),
         getLine(
           'C-bound',
           'rgba(240,240,240,0.3)',
           4,
-          ciiKeys.map((key, index) => chartYear
-            ? parseFloat((boundCIIs[0].cBound + (boundCIIs[1].cBound - boundCIIs[0].cBound) / 12 * index) / (boundCIIs[0].requiredCII + (boundCIIs[1].requiredCII - boundCIIs[0].requiredCII) / 12 * index))?.toFixed(3)
-            : parseFloat((boundCII.find((cii) => +cii.year === key)?.cBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
+          ciiKeys.map((key, index) => parseFloat((boundCII.find((cii) => +cii.year === key)?.cBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
           true,
           "#1145A5"
         ),
@@ -309,9 +307,7 @@ const VesselCII = ({ id, selectedYear }) => {
           'D-bound',
           'rgba(240,240,240,0.3)',
           5,
-          ciiKeys.map((key, index) => chartYear
-            ? parseFloat((boundCIIs[0].dBound + (boundCIIs[1].dBound - boundCIIs[0].dBound) / 12 * index) / (boundCIIs[0].requiredCII + (boundCIIs[1].requiredCII - boundCIIs[0].requiredCII) / 12 * index))?.toFixed(3)
-            : parseFloat((boundCII.find((cii) => +cii.year === key)?.dBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
+          ciiKeys.map((key, index) =>   parseFloat((boundCII.find((cii) => +cii.year === key)?.dBound) / (boundCII.find((cii) => +cii.year === key)?.requiredCII))?.toFixed(3) || null),
           true
         ),
       ],
@@ -711,12 +707,24 @@ const VesselCII = ({ id, selectedYear }) => {
               <Grid item xs={12} md={12}>
                 <LineChart
                   title="CII over time"
-                  data={data}
+                  data={ciiOverTimeChart}
                   onClick={handleClickChart}
                   onDblClick={handleDblClickChart}
                   useCategory={true}
                   xLabel="Year"
                   yLabel="CII Attained / CII Required"
+                  extraOptions={{
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: (tooltipItem) => {
+                            const vessel = categoryPerYear?.[tooltipItem.datasetIndex];
+                            return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel[tooltipItem.dataIndex] || 'NaN'})`;
+                          },
+                        },
+                      },
+                    }
+                  }}
                 />
               </Grid>
             )

@@ -315,7 +315,7 @@ const DashboardCII = ({ company, thisYear, type }) => {
                     label: (tooltipItem) => {
                       const vessel = vesselsChart?.chart?.[tooltipItem.datasetIndex];
                       const vesselData = vessel.data.find((item) => +item.key === +ciiOverTimeLabels.keys[tooltipItem.dataIndex]);
-                      return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vesselData.category}`;
+                      return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vesselData?.category || 'NaN'})`;
                     },
                   },
                 },
