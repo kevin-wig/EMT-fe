@@ -953,7 +953,7 @@ const Voyage = () => {
                       callbacks: {
                         label: (tooltipItem) => {
                           const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
-                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vessel.category}`;
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel?.category || 'NaN'})`;
                         },
                       },
                     },
@@ -973,7 +973,7 @@ const Voyage = () => {
                       callbacks: {
                         label: (tooltipItem) => {
                           const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
-                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}/${vessel.category}`;
+                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel?.category || 'NaN'})`;
                         },
                       },
                     },
@@ -986,8 +986,8 @@ const Voyage = () => {
                 title="Emissions and distance per voyage"
                 data={stackChartPerVoyage}
                 xLabel="Voyage ID"
-                y1Label="Emmisions (tns)"
-                y2Label="Distance tavelled in NM"
+                y1Label="Emissions (tns)"
+                y2Label="Distance travelled in NM"
                 stack={true}
               />
             </Grid>
