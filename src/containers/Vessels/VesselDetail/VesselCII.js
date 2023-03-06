@@ -503,7 +503,7 @@ const VesselCII = ({ id, selectedYear }) => {
       bottomValue: FormatNumber(kpiData?.distanceTraveled, 2),
     },
     {
-      topLabel: 'Vessel Category',
+      topLabel: 'Vessel Type',
       topValue: kpiData?.vesselType ? kpiData?.vesselType : <Tooltip title="No data available" placement="top"><span>N/A</span></Tooltip>,
       bottomLabel: 'DWT',
       bottomValue: FormatNumber(kpiData?.dwt, 2),
