@@ -952,7 +952,7 @@ const Voyage = () => {
                     tooltip: {
                       callbacks: {
                         label: (tooltipItem) => {
-                          const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
+                          const vessel = ciiPerTrip?.[tooltipItem.dataIndex];
                           return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel?.category || 'NaN'})`;
                         },
                       },
@@ -972,7 +972,7 @@ const Voyage = () => {
                     tooltip: {
                       callbacks: {
                         label: (tooltipItem) => {
-                          const vessel = ciiPerTrip?.[tooltipItem.datasetIndex];
+                          const vessel = ciiPerTrip?.[tooltipItem.dataIndex];
                           return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel?.category || 'NaN'})`;
                         },
                       },
