@@ -189,7 +189,13 @@ const Voyage = () => {
   const [files, setFiles] = useState([]);
   const [parsedData, setParsedData] = useState({});
   const [isImporting, setIsImporting] = useState(false);
-  const paginationParams = useMemo(() => ({ order, sortBy, page, limit, search }), [order, sortBy, page, limit, search]);
+  const paginationParams = useMemo(() => ({
+    order,
+    sortBy,
+    page,
+    limit,
+    search
+  }), [order, sortBy, page, limit, search]);
   const filterParams = useMemo(
     () => ({
       voyageType: voyageType === 'VISIBLE' ? ['PREDICTED', 'ACTUAL', 'ARCHIVED'] : [voyageType],
@@ -710,13 +716,13 @@ const Voyage = () => {
                 className={`${classes.action} view`}
                 onClick={() => history.push(`/voyage/${data.id}`)}
               >
-                <EditIcon/>
+                <EditIcon />
               </Button>
               <Button
                 className={`${classes.action} delete`}
                 onClick={() => handleDelete(data.id)}
               >
-                <DeleteIcon/>
+                <DeleteIcon />
               </Button>
             </>
           ) : (
@@ -724,7 +730,7 @@ const Voyage = () => {
               className={`${classes.action} view`}
               onClick={() => history.push(`/voyage/${data.id}`)}
             >
-              <VisibilityIcon/>
+              <VisibilityIcon />
             </Button>
           ),
       },
@@ -972,8 +978,22 @@ const Voyage = () => {
                     tooltip: {
                       callbacks: {
                         label: (tooltipItem) => {
-                          const vessel = ciiPerTrip?.[tooltipItem.dataIndex];
-                          return `${tooltipItem.dataset.label}: ${tooltipItem.formattedValue}(${vessel?.category || 'NaN'})`;
+                          const value = +tooltipItem.formattedValue;
+                          const trip = ciiPerTrip?.[tooltipItem.dataIndex];
+                          const baseValue = value * trip.requiredCII;
+                          let category;
+                          if (baseValue > trip.dBound) {
+                            category = "E";
+                          } else if (baseValue > trip.cBound) {
+                            category = "D";
+                          } else if (baseValue > trip.bBound) {
+                            category = "C";
+                          } else if (baseValue > trip.aBound) {
+                            category = "B";
+                          } else if (baseValue <= trip.aBound) {
+                            category = "A";
+                          }
+                          return `${tooltipItem.dataset.label}: ${value}(${category || 'NaN'})`;
                         },
                       },
                     },
@@ -1004,8 +1024,10 @@ const Voyage = () => {
               me?.userRole?.role !== VIEWER &&
               <Grid item xs={12} md={12}>
                 <Card className={classes.card}>
-                  <Dropzone files={files} onExcelParse={(file) => excelVoyageParse(file)}
-                            onChangeFiles={handleChangeFiles}/>
+                  <Dropzone
+                    files={files} onExcelParse={(file) => excelVoyageParse(file)}
+                    onChangeFiles={handleChangeFiles}
+                  />
                   <Box className={classes.fileAction}>
                     <CommonButton
                       color="secondary"
